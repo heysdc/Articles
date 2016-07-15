@@ -18,5 +18,7 @@
 6、基本数据类型：object, null, undefined, string, number, boolean
   typeof对应的值: 'object', 'object', 'undefined', 'string', 'number', 'boolean', 另外function为'function'
   undefined的意思是未初始化，使用未声明的变量会报错，typeof未声明变量为'undefined'
-7、为什么有了undefined还要有个null，null表示一个空对象指针，即当你想建一个对象时，可以使用null初始化
-
+7、为什么有了undefined还要有个null，null表示一个空对象指针，即当你想建一个对象时，可以使用null初始化，undefined派生自null，null == undefined但是null !== undefined
+8、想用八进制0开头且后面每位数都得小于8,十六进制0x开头
+9、不要测试某个特定的浮点数值，0.1+0.2 !== 0.3，特大或者特小的数1e2 === 100
+10、js数值取值范围5e-324~1.8e308大了Infinity小了-Infinity，Number.NEGATIVE_INFINITY Number.POSITIVE_INFINITY分别保存极大值与极小值 isFinite()判断某个数是否超出范围
