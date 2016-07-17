@@ -22,3 +22,9 @@
 8、想用八进制0开头且后面每位数都得小于8,十六进制0x开头
 9、不要测试某个特定的浮点数值，0.1+0.2 !== 0.3，特大或者特小的数1e2 === 100
 10、js数值取值范围5e-324~1.8e308大了Infinity小了-Infinity，Number.NEGATIVE_INFINITY Number.POSITIVE_INFINITY分别保存极大值与极小值 isFinite()判断某个数是否超出范围
+11、isNaN（）函数，判定转换完之后的数值（如果是对象先判断valueOf方法，不等则再调用toString（）方法）是否不是数，NaN与任何值都相等，包括其自身
+12、parseInt（） es5已经不自动识别八进制了，可以指定第二个参数，转换时使用的基数
+13、字符串中转义序列为反斜杠\如\n\t
+14、emcascript中字符串可不改变，一旦创建，不可更改
+15、六种基本类型除了null、undefiend之外都有toString()方法，如果值可能为null或者undefined，可以采用String（）函数，其规则：1有toString（）方法调用这个，如果为null或者undefined返回‘null’，‘undefined’
+16、es中对象就是一组数据与功能的集合（属性与方法）
