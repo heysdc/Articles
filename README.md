@@ -59,4 +59,13 @@
 11. 分配给web浏览器的内存比分配给桌面程序的少，防止网页耗尽内存导致系统崩溃
 
 ###五、引用类型
+####对象
+######es5
+1.  什么是引用类型？*ecmscript中，引用类型是一种数据结构，将数据和功能组织在一起，常被称为类*。引用类型也被称为**对象定义**，因为它们描述的是一类对象所具有的属性和方法。常见的引用类型如Object, Boolean, Array等等。对象是某个特定引用类型的实例。比如`var a = new Array()`可以理解为通过引用类型Array创建了一个数组实例，Array引用类为新对象定义了默认的属性和方法。
+2.  `var a = {}`这里的｛表示表达式上下文的开始。*ecmascript中**表达式上下文（expression context）**指的是能返回一个值*，赋值后面要跟一个值，所以是表达式上下文。**语句上下文(statement context)**表示一个语句块的开始。如`if (expression context) {statement context}`
+3.  `function func(args) { if (typeof args.name === 'string') {return} }`遇到需要传入大量可选参数的函数，最好用对象字面量封装多个可选参数
 
+
+#####es6
+1. 属性简洁表示法：`var a = {a, b () {}}`等同于`var a = {a: a, b: function(){}}`
+2. 
