@@ -1,5 +1,5 @@
 # javascriptReview
-复习，js高级程序设计(第三版)，主要是记一下自己之前没记住的，温故知新
+复习，js高级程序设计(第三版)，主要是记一下自己之前没记住的，温故知新；既然都看es5了，顺带看看es6
 
 ###一、js简介
 1. js起源：一开始网页是静态的，但得有交互啊，为了提交表单，弄了个js
@@ -7,9 +7,9 @@
   (1) emcascript，当年netscape与ie搞了俩js，为了统一，就找ecma弄了个js标准，规定了最基本的语法、类型、语句、操作符等
   (2) dom与（3）bom均为语言的扩展，即负责语言核心（ecmascript）与运行环境（通常为浏览器）的交互。dom为针对html的应用程序接口，即操控页面html的，但是后来又进行了扩展dom1级2级3级，除了对节点进行操作还能对dom样式、事件、验证、保存等进行一系列扩展操作等。dom一开始也是因为NI大战由w3c规划的，其它语言也有自己的dom标准如svg
   (3) bom，browser object model，控制浏览器显示页面以外的部分，习惯上把所有针对浏览器的js扩展都算作bom，如弹出新窗口，获取窗口信息，获取分辨率信息等，直到h5的出现，bom无标准的混乱状况才得到解决
-  
+
 ###二、在html中使用js
-1. \<script>为同步加载，不放head里因为加载js慢的话html加载不进来，导致页面空着，所以一般放最后，该标签还有个defer和async属性可选
+1. script标签为同步加载，不放head里因为加载js慢的话html加载不进来，导致页面空着，所以一般放最后，该标签还有个defer和async属性可选
 
 ###三、基本概念
 1. 严格模式：在js文件顶活着函数内部开始处加个 "use strict"; 这是一个非常厉害的编译指示，用于告诉js引擎切换到严格模式，ie10以上才支持
@@ -68,4 +68,22 @@
 
 #####es6
 1. 属性简洁表示法：`var a = {a, b () {}}`等同于`var a = {a: a, b: function(){}}`
-2. 
+2. Object.is(a, b)相当于a === b，不同的是NaN等于自身，正负0不相等。
+3. Object.assign(targetObj, sourceObj...)将不同对象的属性浅赋值到对象对象中
+4. es5三个忽略enumerable为false的属性(1)for in操作,遍历自身的和继承的可枚举属性(2)Object.keys()对象自身的可枚举属性键名，推荐用其替代for in(3)JSON.stringify();es6新增两个Object.assign,Reflect.enumerate()返回for in循环会遍历的属性
+5. Object.getOwnPropertyDescriptor(obj, propertyName)获取属性的描述对象
+6. es6提供了接口Object.setPrototypeOf(obj, prototype), Object.getPrototypeOf(obj)获得prototype对象，是es6正式推荐读写对象构造函数的prototype属性
+7. **Rest参数**: `let {a, ...b} = {a: 1, b: 2, c: 3, d: 4}`从一个对象取值，将将所有可遍历但尚未读取的属性分配到指定的对象上；**扩展运算符**: 取出参数对象的所有可遍历属性复制到对象中，相当于assign，`let test = {x: 1, ..y} = Object.assign({x: 1}, y)`
+*身体不舒服，待续*
+
+####数组
+1. length属性不是只读的，通过给它赋值可以增减数组长度
+2. 一个页面多个框架，每个框架都有自己的全局执行环境，不同执行环境的构造函数Array构造函数不同
+3. 判断数组方法，a instanceof Array, 更保险的Array.isArray()(ie9+)
+4. push, unshift可以用来传多个值，返回数组长度，shift, pop返回从数组中删除的一项
+5. sort((val1, val2) => val2 > val1)可以传入函数实现特定排序，reverse()相反排序
+6. concat方法返回一个数组副本，参数为数组则将每一项分别添加
+7. slice(起始项，最后一项的后一项)splice(起始项， 删除的项数，添加的项目)返回从数组中删除的项
+8. indexOf,lastIndexOf,reduce,reduceRight(均为ie9+)后两者为归并方法，reduce((pre, cur, index, arr) => nextPre, firstPre)如果firstPre不指定则默认为第一项
+
+####Date
