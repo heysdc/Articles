@@ -86,4 +86,14 @@
 7. slice(起始项，最后一项的后一项)splice(起始项， 删除的项数，添加的项目)返回从数组中删除的项
 8. indexOf,lastIndexOf,reduce,reduceRight(均为ie9+)后两者为归并方法，reduce((pre, cur, index, arr) => nextPre, firstPre)如果firstPre不指定则默认为第一项
 
+#####es6
+1. Array.from(arrLike, (val, key) => {this}, this),将类数组对象（即存在length属性）与内置iterator接口的数据结构变成数组,第二参数与map类似，如果里面用到this还可以用第三参数绑定this
+2. Array.of()弥补Array()传入参数不同生成数组不同的尴尬
+3. copyWithin(targetPos, start = 0, end = this.length)会修改当前数组
+4. find()findIndex()参数为回调函数，查找符合条件的单位
+5. fill(val, from, to)用指定的值填充起始位置，起始位置可选
+6. values(),keys(),entries()返回一个遍历器对象，可用for of循环遍历
+7. includes()是否包含指定值，主要对NaN支持较好另外语义明显点
+8. 数组的空位，标示数组某一个位置没有任何值，也没有undefined，Array(3),es5对空位处理不一致（一般跳出join,toString按undefined处理），es6统一按undefined处理
+
 ####Date
