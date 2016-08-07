@@ -97,3 +97,51 @@
 8. 数组的空位，标示数组某一个位置没有任何值，也没有undefined，Array(3),es5对空位处理不一致（一般跳出join,toString按undefined处理），es6统一按undefined处理
 
 ####Date
+1. Date.parse()接受一个因地区而异的表示日期的字符串做参数，返回毫秒数；Date.UTC(year, monthFrom0, day, hourFrom0, minute, sec, millisec),也返回毫秒数。直接用构造函数会默认调用这两函数，只要传的参数对，不过若构造函数默认调用Date.UTC,则创造的时间是UTC时间。
+2. 继承的与自带的日期格式化方法都没什么卵用，valueOf方法返回一个毫秒数；有用的方法有：
+```javascript
+getFullYear()
+setFullYear() //参数四位数字
+getMonth() //start with 0
+setMonth()
+getDate() //月份的天数
+setDate()
+getDay() //weekday start with 0
+setDay()
+getHour() //hour start with 0
+setHour() //依次类推
+```
+
+####RegExp
+1. 正则表达式由pattern与flags部分组成
+```javascript
+var expression = /pattern/flags
+var pattern2 = new RegExp("pattern", "flags")
+```
+flags有g、i、m，i不区分大小写，m-mutiline多行模式，pattern所有元字符（正则中可能会用到的符号）要转义,构造函数采用字符串所以可能要双重转义
+2. 方法, test（）参数为数组，判断匹配不匹配
+3. 复习一下简单的正则吧
+```javascript
+// 元字符们
+.除换行符以外的任意字符
+\w字符下划线数字汉字
+\s任意空白符
+\d数字
+^字符串开始
+$字符串结束
+\b单词开始或者结束
+// 次数，放在后面，表示之前重复多少次
+*任意次
++一次或更多次
+{a, b}不少于a，不大于b
+？0或者1次
+// 字符类
+［1-9］［aeiou］［0-9a－z］满足括号内条件
+｜表示满足任一条件即可
+// 反义
+\W不是字母数字下划线汉字
+\S不是空白符
+\D不是数字
+\B不是单词开头或者结束
+[^0-9]不是数字的内容
+```
