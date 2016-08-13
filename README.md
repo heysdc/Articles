@@ -145,3 +145,42 @@ $字符串结束
 \B不是单词开头或者结束
 [^0-9]不是数字的内容
 ```
+
+####Function
+1. 函数实际上是对象，函数名只是指向函数对象的指针
+```javascript
+var fun = new Function('param1', 'param2', 'return param1 + param2')
+```
+2. 变量提升：函数声明与表达式的区别在于声明存在变量提升，而表达式没有，定义变量均不存在变量提升
+```javascript
+console.log(a(), b()) // wrong
+var a = function () {
+}
+var b = 1
+console.log(a.a()) //right
+var a = {
+  a: function() {
+    console.log(this.b())
+  },
+  b: function() {
+    console.log('1')
+  }
+}
+```
+3. arguments.callee指向arguments的函数
+4. this：函数据以执行的环境对象, 所谓环境对象的概念与之前提到的执行环境（execution context），执行环境中的定义的变量函数的集合－变量对象（vairable object）以及代码执行过程中变量对象所串起来的的作用域链(scope chain)没多大关系，指的是‘函数作为某一对象的方法被调用’中的‘某一对象’,
+5. 函数属性caller，保存调用当前函数的引用，全局作用域中其值为null，严格模式下，访问caller与callee会报错
+6. 严格模式下，未指定对象直接调用函数，this不会指向widnow，为undefined
+7. call,apply可以改变this指向，即改变‘函数作为某一对象的方法被调用’中的‘某一对象’，最大的好处是解除对象与方法之间的耦合关系
+8. bind(ie9+)方法同apply，返回一个apply实例而已，需要把改变this这一行为固化下来，可以使用
+```javascript
+var a = funcb.bind(objc) // objc里是不会多一个funcb方法的
+```
+
+####基本包装类型
+1. 为了便于操作**基本类型值**, ecma提供了三个特殊的**引用类型**, *Boolean, Number, String*, 它们具有与各自基本类型相对应的特殊行为。为了便于操作，每当读取一个基本类型值，后台都会创建一个对应的**基本包装类型**对象，从而能够操作基本类型数据。
+2. 基本包装类型的生存期为一行代码的执行瞬间，生成实例，进行操作，然后立即销毁，所以不能给为*基本类型值*添加属性和方法。
+3. 使用new调用基本包装类型的构造函数，直接调用为调用转型函数。
+
+#####Boolean
+1. 
