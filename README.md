@@ -182,5 +182,18 @@ var a = funcb.bind(objc) // objc里是不会多一个funcb方法的
 2. 基本包装类型的生存期为一行代码的执行瞬间，生成实例，进行操作，然后立即销毁，所以不能给为*基本类型值*添加属性和方法。
 3. 使用new调用基本包装类型的构造函数，直接调用为调用转型函数。
 
-#####Boolean
-1. 
+#####Number
+1. 基本包装类型与基本类型不同，前者对象，后者基本类型
+2. toFixed(a)按照指定小数位返回数值字符串，toExpotential(a)指数标志法a为小数位数，toPrecision(a)根据a（所有数字位数）自动判断用前两种方法
+
+#####String
+1. charAt()与[]（ie8+）作用一样，charCodeAt()返回字符编码
+2. subString(st, end);subStr(st, len);slice(st, end)不会修改字符串，负数情况下：第一个参数subString()转为0；第二个参数，subString,subStr均转为0;有点乱，建议用slice，subStr
+3. indexOf,lastIndexOf接受第二个参数，从哪开始搜索
+4. search(RegExp)返回索引
+5. replace(RegExp/str, str/function(match, pos, origianlText){return replaceValue})第一个参数为字符串则只替换第一个
+6. split(str/RegExp, arrayMaxLength)也可传正则，老浏览器用正则实现可能有差异
+7. localeCompare（b）排在b前，返回负数，0相同
+8. fromCharCode()接受一个或多个字符编码,返回一个字符串
+
+####单体内置对象
