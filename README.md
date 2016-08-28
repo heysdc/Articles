@@ -4,16 +4,16 @@
 ###一、js简介
 1. js起源：一开始网页是静态的，但得有交互啊，为了提交表单，弄了个js
 2. js包括三部分：
-  (1) emcascript，当年netscape与ie搞了俩js，为了统一，就找ecma弄了个js标准，规定了最基本的语法、类型、语句、操作符等
-  (2) dom与（3）bom均为语言的扩展，即负责语言核心（ecmascript）与运行环境（通常为浏览器）的交互。dom为针对html的应用程序接口，即操控页面html的，但是后来又进行了扩展dom1级2级3级，除了对节点进行操作还能对dom样式、事件、验证、保存等进行一系列扩展操作等。dom一开始也是因为NI大战由w3c规划的，其它语言也有自己的dom标准如svg
-  (3) bom，browser object model，控制浏览器显示页面以外的部分，习惯上把所有针对浏览器的js扩展都算作bom，如弹出新窗口，获取窗口信息，获取分辨率信息等，直到h5的出现，bom无标准的混乱状况才得到解决
+  (1) emcascript，当年netscape与ie搞了俩js，为了统一，就找**ecma**弄了个js标准，规定了最基本的语法、类型、语句、操作符等
+  (2) **dom**与（3）**bom**均为语言的扩展，即负责语言核心（ecmascript）与运行环境（通常为浏览器）的交互。dom为针对html的应用程序接口，即操控页面html的，但是后来又进行了扩展dom1级2级3级，除了对节点进行操作还能对dom样式、事件、验证、保存等进行一系列扩展操作等。dom一开始也是因为NI大战由w3c规划的，其它语言也有自己的dom标准如svg
+  (3) **bom，browser object model**，控制浏览器显示页面以外的部分，习惯上把所有针对浏览器的js扩展都算作bom，如弹出新窗口，获取窗口信息，获取分辨率信息等，直到h5的出现，bom无标准的混乱状况才得到解决
 
 ###二、在html中使用js
 1. script标签为同步加载，不放head里因为加载js慢的话html加载不进来，导致页面空着，所以一般放最后，该标签还有个defer和async属性可选
 
 ###三、基本概念
 1. 严格模式：在js文件顶活着函数内部开始处加个 "use strict"; 这是一个非常厉害的编译指示，用于告诉js引擎切换到严格模式，ie10以上才支持
-2. 变量 省略操作符直接定义变量 message = 10将直接创建一个全局变量
+2. 如果省略操作符var直接定义变量将直接创建一个全局变量
 3. 基本数据类型：object, null, undefined, string, number, boolean
   typeof对应的值: 'object', 'object', 'undefined', 'string', 'number', 'boolean', 另外function为'function'
   undefined的意思是未初始化，使用未声明的变量会报错，typeof未声明变量为'undefined'
@@ -50,6 +50,15 @@
 4. 全局环境为最外围的执行环境，宿主环境不同，执行环境的对象也不同，web浏览器中全局环境呗认为是window对象
 5. 某个环境中的所有代码执行完毕后，该环境被销毁，每个函数都有自己的执行环境，执行流进入一个函数，函数的环境被推入一个环境栈中，执行完弹出
 6. 作用域链（scope chain）由变量对象组成，其前端指向当前的执行环境的变量对象，上一级为包含环境的变量对象，直至全局环境的变量对象，保证了对有权访问的所有变量和函数的有序访问
+```javascript
+var a = 'a'
+function funcB() {console.log(a)}
+function funcD(funcE) {
+  var a = 'aa'
+  funcE()
+}
+funcD(funcB) // 结果为‘a’,初步结论为作用域链为定义的时候确定的
+```
 7. es5执行环境的类型有两种：全局与函数，但有其他办法延长作用域链with与catch
 8. 搜索标识符顺着作用域链走，如果找到了就停了
 9. 垃圾收集的两种策略：
@@ -181,10 +190,36 @@ var a = funcb.bind(objc) // objc里是不会多一个funcb方法的
 1. 为了便于操作**基本类型值**, ecma提供了三个特殊的**引用类型**, *Boolean, Number, String*, 它们具有与各自基本类型相对应的特殊行为。为了便于操作，每当读取一个基本类型值，后台都会创建一个对应的**基本包装类型**对象，从而能够操作基本类型数据。
 2. 基本包装类型的生存期为一行代码的执行瞬间，生成实例，进行操作，然后立即销毁，所以不能给为*基本类型值*添加属性和方法。
 3. 使用new调用基本包装类型的构造函数，直接调用为调用转型函数。
+4. 基本包装类型的方法，主要有以下三种类型：
+（1）只能作用于基本类型变量，目测Number的部分方法是这样
+```javascript
+var variable = 10
+variable.isFixed(2) // '10.00'
+10.isFixed(2) // Error
+```
+（2）可以直接作用于基本类型，目测Array的方法是这样的
+```javascript
+'sb'.slice(0) // 'sb'
+```
+（3）依附于构造函数对象作为函数调用，目测Number的部分方法是这样
+```javascript
+Number.isFinite(5) // true
+```
 
 #####Number
 1. 基本包装类型与基本类型不同，前者对象，后者基本类型
 2. toFixed(a)按照指定小数位返回数值字符串，toExpotential(a)指数标志法a为小数位数，toPrecision(a)根据a（所有数字位数）自动判断用前两种方法
+
+######es6
+```javascript
+Number.isFinite(10) //true
+Number.isNaN('NaN') //false 逐步减少全局函数，使语言模块化，与全局函数区别，不作自动类型转换
+Number.parseInt('1.2') // 1
+Number.parseFloat('1.2#') // 1.2
+Number.isInteger(25.0) // true js里整数浮点数同样的存储方法，所以看作整数
+Number.EPSILON // 为浮点数运算设置一个误差范围，误差常量
+Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范围无法精确表示
+```
 
 #####String
 1. charAt()与[]（ie8+）作用一样，charCodeAt()返回字符编码
@@ -196,4 +231,46 @@ var a = funcb.bind(objc) // objc里是不会多一个funcb方法的
 7. localeCompare（b）排在b前，返回负数，0相同
 8. fromCharCode()接受一个或多个字符编码,返回一个字符串
 
+######es6
+1. js内，字符以utf-16格式存储，每个字符固定为两个字节，四个字符es5就不一定能正确处理了，可以借助es6的字符串方法来处理codePointAt()(代替charCodeAt),at()(es7中的代替charAt)String.fromCodePoint(UTF-16字符)
+2. 为了表示语调和重音符号，unicode提供两种方案：直接提供字符以及合成符号，js无法识别，normalize（）方法提供unicode正规化的统一方案
+3.
+```javascript
+includes(str, startPos)
+startsWith(str, startPos)
+endsWith(str, startPos)从startPos向前搜
+'sb'.repeat(3) // 'sbsbsb'
+```
+4. 字符串补全长度
+```javascript
+'a'.padStart(5, 'ab') // 'ababa'
+'s'.padEnd(5) // 's    '
+```
+5. 模版字符串中可以调用函数
+6. **标签模版部分有待研究**
+
 ####单体内置对象
+1. **单体内置对象**为ecmascript提供的不依赖于宿主环境的对象
+2. **global**对象，所有全局函数与变量都是global对象的属性和方法
+3. 用utf-8编码替换所有字符
+```javascript
+encodeURI() // 只替换空格
+encodeURIComponent() // 替换所有非字母数字字符
+decodeURI()
+decodeURIComponent()
+```
+4. eval() 执行传入字符串js代码，不存在变量提升，代码在eval()执行的时候被创建
+5. global对象的所有属性undefined, NaN, Infinity, Object, Array, Function, Boolean, String, Number, Date, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError
+6. 浏览器环境下一般将global对象的属性及方法作为window对象的一部分实现
+7. Math对象提供的方法比自己写类似的快的多，常用的方法有
+```javascript
+Math.random() // 返回一个0-1的随机数
+Math.max(a,b,c) // 返回最大值Max.max.apply(Math, array),类似的还有min
+Math.floor() // 向下取整
+Math.ceil() // 向上取整
+Math.round() // 四舍五入
+```
+
+###六、面向对象的程序设计
+1. 每个对象都是基于一个引用类型创建的，这个引用类型可以是原生或者自定义的
+2.
