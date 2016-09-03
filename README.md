@@ -272,5 +272,41 @@ Math.round() // 四舍五入
 ```
 
 ###六、面向对象的程序设计
+
+####理解对象
 1. 每个对象都是基于一个引用类型创建的，这个引用类型可以是原生或者自定义的
-2.
+2. 对象的属性在创建时都带有一些特征值，js通过这些特征值来定义其行为
+3. js属性分为两种,数据属性与访问器属性
+4. 数据属性包含了一个数据值的位置，可读写值，其特性有（1）[[configurable]]能否删除属性、修改属性的特性、改变属性类型（2）[[enumerable]]是否可通过for in遍历（3）[[writable]]是否可修改（4）[[value]]数据值
+5. 定义一个属性Object.defineProperty(对象，属性名，特性对象)，特性对象如不指定，均默认false，ie9+
+6. 访问器属性，不包含数据值，即其特性没有[[value]]以及相关的[[writable]]，包含一对get与set函数，常见用法为设置一个属性的值导致其它属性值变化,ie9+
+7. 详细定义多个属性Object.defineProperties()
+```javascript
+Object.defineProperties(a, {
+  va1: {
+    value: 'val',
+    enumerable: true,
+    writable: true,
+    configurable: true
+  },
+  va2: {
+    get: function() {
+      return this.va1
+    },
+    set: function(val) {
+      this.va1 += val
+    }
+  }
+})
+```
+8. Object.getOwnPropertyDescriptor(obj, prop),取得给定属性的特性对象，ie9+
+
+####创建对象
+1. 读写操作中写是一个复合操作，首先要读（找到写入的位置）才能写，如a.b = 1，首先是读到a.b后再执行了写入操作
+2. constructor属性定义在prototype上，指向prototype属性所在的构造函数
+```javascript
+prototypeA.isPrototypeOf(obj) // 判断某个prototype是否为某个对象的__proto__属性
+Object.getPrototypeOf(obj) // 代替__proto__属性，es5定义，ie9+
+obj1.getOwnProperty('propertyName') // 检查是否有该名字的实例属性
+delete obj1.prop1 // 只会删除实例属性
+```
