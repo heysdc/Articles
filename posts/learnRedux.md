@@ -120,3 +120,52 @@ render(
   </Provider>
 )
 ```
+
+##Async Actions
+
+1. 观摩一下接口数据存储，可以用normalizr转一下
+```javascript
+{
+  selectedSubreddit: 'frontend',
+  postsBySubreddit: {
+    frontend: {
+      isFetching: true,
+      didInvalidate: false,
+      items: []
+    },
+    reactjs: {
+      isFetching: false,
+      didInvalidate: false,
+      lastUpdated: 1439478405547,
+      items: [
+        {
+          id: 42,
+          title: 'Confusion about Flux and Relay'
+        },
+        {
+          id: 500,
+          title: 'Creating a Simple Application Using React JS and Flux Architecture'
+        }
+      ]
+    }
+  }
+}
+```
+2. 试着自己表述一下，面对异步问题，首先调用异步行为可以在两个地方：
+（1）推荐的action creater，首先正常情况下action creater就不应该是异步的，因为action creater进行异步操作没有返回值，如下所示，会导致很多问题。
+```javascript
+// return undefined，expect action
+const actionCreater = () => {
+  setTimeout(() => {
+    console.log('sb')
+  }, 2000)
+}
+const thunk = (text) => {
+  return (dispatch, getState) {
+    const state = getState() // get state, use careful! recommend as judgement
+    dispatch(otherActionCreater(text))
+  }
+}
+```
+（2）不把action creater当正常的用，那就得一级一级传dispatch了，把store当一个单例引调用store.dispatch也会导致很多问题
+所以稍微正轨复杂点的项目推荐中间件redux-thunk，可以接受一个非正常的action creater
