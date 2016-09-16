@@ -310,3 +310,11 @@ Object.getPrototypeOf(obj) // 代替__proto__属性，es5定义，ie9+
 obj1.getOwnProperty('propertyName') // 检查是否有该名字的实例属性
 delete obj1.prop1 // 只会删除实例属性
 ```
+3. 通过构造函数建完对象之后，对象通过prototype与构造函数保持联系，`obj.__proto__.constructor`指向构造函数，prototype为每个函数都有的一个属性，用处就是放点公用的东西
+4. Object.keys(obj)返回对象所有可枚举实例属性数组，ie9+
+5. 构造函数在不返回值的情况下，默认返回新对象实例，如果有返回值，可以重写调用构造函数时返回的值, 返回数组构造数组，返回对象构造对象
+6. 稳妥构造函数，不用this,不用new，用于安全环境，基本上就是不用this的工厂模式
+
+####继承
+1. 原型链的基本思想，对象a的__proto__指向prototype，如果将prototype指向对象b,原型检索会在这断掉吗？不会，对象b也有自己的__proto__属性，最次也指向Object即原型链的终点
+2. 
