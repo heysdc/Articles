@@ -191,20 +191,20 @@
 2. 基本包装类型的生存期为一行代码的执行瞬间，生成实例，进行操作，然后立即销毁，所以不能给为*基本类型值*添加属性和方法。
 3. 使用new调用基本包装类型的构造函数，直接调用为调用转型函数。
 4. 基本包装类型的方法，主要有以下三种类型：
-（1）只能作用于基本类型变量，目测Number的部分方法是这样
-```javascript
-var variable = 10
-variable.isFixed(2) // '10.00'
-10.isFixed(2) // Error
-```
-（2）可以直接作用于基本类型，目测Array的方法是这样的
-```javascript
-'sb'.slice(0) // 'sb'
-```
-（3）依附于构造函数对象作为函数调用，目测Number的部分方法是这样
-```javascript
-Number.isFinite(5) // true
-```
+  （1）只能作用于基本类型变量，目测Number的部分方法是这样
+  ```javascript
+  var variable = 10
+  variable.isFixed(2) // '10.00'
+  10.isFixed(2) // Error
+  ```
+  （2）可以直接作用于基本类型，目测Array的方法是这样的
+  ```javascript
+  'sb'.slice(0) // 'sb'
+  ```
+  （3）依附于构造函数对象作为函数调用，目测Number的部分方法是这样
+  ```javascript
+  Number.isFinite(5) // true
+  ```
 
 #####Number
 1. 基本包装类型与基本类型不同，前者对象，后者基本类型
@@ -317,7 +317,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 
 ####继承
 1. 原型链的基本思想，对象a的__proto__指向prototype，如果将prototype指向对象b,原型检索会在这断掉吗？不会，对象b也有自己的__proto__属性，最次也指向指向Object再指向Object的原型null即原型链的终点
-2. 
+2.
 
 ##七、函数表达式
 
@@ -360,7 +360,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 
   var obj = {
     name: "My Object",
-    
+
     getName: function(){
       return function(){
         return this.name;
