@@ -50,7 +50,7 @@
 4. 全局环境为最外围的执行环境，宿主环境不同，执行环境的对象也不同，web浏览器中全局环境呗认为是window对象
 5. 某个环境中的所有代码执行完毕后，该环境被销毁，每个函数都有自己的执行环境，执行流进入一个函数，函数的环境被推入一个环境栈中，执行完弹出
 6. 作用域链（scope chain）由变量对象组成，其前端指向当前的执行环境的变量对象，上一级为包含环境的变量对象，直至全局环境的变量对象，保证了对有权访问的所有变量和函数的有序访问
-  <pre>
+  ```js
   var a = 'a'
   function funcB() {console.log(a)}
   function funcD(funcE) {
@@ -58,7 +58,7 @@
     funcE()
   }
   funcD(funcB) // 结果为‘a’,初步结论为作用域链为定义的时候确定的
-  </pre>
+  ```
 7. es5执行环境的类型有两种：全局与函数，但有其他办法延长作用域链with与catch
 8. 搜索标识符顺着作用域链走，如果找到了就停了
 9. 垃圾收集的两种策略：
@@ -108,7 +108,7 @@
 ####Date
 1. Date.parse()接受一个因地区而异的表示日期的字符串做参数，返回毫秒数；Date.UTC(year, monthFrom0, day, hourFrom0, minute, sec, millisec),也返回毫秒数。直接用构造函数会默认调用这两函数，只要传的参数对，不过若构造函数默认调用Date.UTC,则创造的时间是UTC时间。
 2. 继承的与自带的日期格式化方法都没什么卵用，valueOf方法返回一个毫秒数；有用的方法有：
-  <pre>
+  ```js
   getFullYear()
   setFullYear() //参数四位数字
   getMonth() //start with 0
@@ -119,18 +119,18 @@
   setDay()
   getHour() //hour start with 0
   setHour() //依次类推
-  </pre>
+  ```
 
 ####RegExp
 1. 正则表达式由pattern与flags部分组成
-  <pre>
+  ```js
   var expression = /pattern/flags
   var pattern2 = new RegExp("pattern", "flags")
-  </pre>
+  ```
   flags有g、i、m，i不区分大小写，m-mutiline多行模式，pattern所有元字符（正则中可能会用到的符号）要转义,构造函数采用字符串所以可能要双重转义
 2. 方法, test（）参数为数组，判断匹配不匹配
 3. 复习一下简单的正则吧
-  <pre>
+  ```js
   // 元字符们
   .除换行符以外的任意字符
   \w字符下划线数字汉字
@@ -153,15 +153,15 @@
   \D不是数字
   \B不是单词开头或者结束
   [^0-9]不是数字的内容
-  </pre>
+  ```
 
 ####Function
 1. 函数实际上是对象，函数名只是指向函数对象的指针
-  <pre>
+  ```js
   var fun = new Function('param1', 'param2', 'return param1 + param2')
-  </pre>
+  ```
 2. 变量提升：函数声明与表达式的区别在于声明存在变量提升，而表达式没有，定义变量均不存在变量提升
-  <pre>
+  ```js
   console.log(a(), b()) // wrong
   var a = function () {
   }
@@ -175,16 +175,16 @@
       console.log('1')
     }
   }
-  </pre>
+  ```
 3. arguments.callee指向arguments的函数
 4. this：函数据以执行的环境对象, 所谓环境对象的概念与之前提到的执行环境（execution context），执行环境中的定义的变量函数的集合－变量对象（vairable object）以及代码执行过程中变量对象所串起来的的作用域链(scope chain)没多大关系，指的是‘函数作为某一对象的方法被调用’中的‘某一对象’,
 5. 函数属性caller，保存调用当前函数的引用，全局作用域中其值为null，严格模式下，访问caller与callee会报错
 6. 严格模式下，未指定对象直接调用函数，this不会指向widnow，为undefined
 7. call,apply可以改变this指向，即改变‘函数作为某一对象的方法被调用’中的‘某一对象’，最大的好处是解除对象与方法之间的耦合关系
 8. bind(ie9+)方法同apply，返回一个apply实例而已，需要把改变this这一行为固化下来，可以使用
-  <pre>
+  ```js
   var a = funcb.bind(objc) // objc里是不会多一个funcb方法的
-  </pre>
+  ```
 
 ####基本包装类型
 1. 为了便于操作**基本类型值**, ecma提供了三个特殊的**引用类型**, *Boolean, Number, String*, 它们具有与各自基本类型相对应的特殊行为。为了便于操作，每当读取一个基本类型值，后台都会创建一个对应的**基本包装类型**对象，从而能够操作基本类型数据。
@@ -192,26 +192,26 @@
 3. 使用new调用基本包装类型的构造函数，直接调用为调用转型函数。
 4. 基本包装类型的方法，主要有以下三种类型：
   （1）只能作用于基本类型变量，目测Number的部分方法是这样
-  <pre>
+  ```js
   var variable = 10
   variable.isFixed(2) // '10.00'
   10.isFixed(2) // Error
-  </pre>
+  ```
   （2）可以直接作用于基本类型，目测Array的方法是这样的
-  <pre>
+  ```js
   'sb'.slice(0) // 'sb'
-  </pre>
+  ```
   （3）依附于构造函数对象作为函数调用，目测Number的部分方法是这样
-  <pre>
+  ```js
   Number.isFinite(5) // true
-  </pre>
+  ```
 
 #####Number
 1. 基本包装类型与基本类型不同，前者对象，后者基本类型
 2. toFixed(a)按照指定小数位返回数值字符串，toExpotential(a)指数标志法a为小数位数，toPrecision(a)根据a（所有数字位数）自动判断用前两种方法
 
 ######es6
-<pre>
+```js
 Number.isFinite(10) //true
 Number.isNaN('NaN') //false 逐步减少全局函数，使语言模块化，与全局函数区别，不作自动类型转换
 Number.parseInt('1.2') // 1
@@ -219,7 +219,7 @@ Number.parseFloat('1.2#') // 1.2
 Number.isInteger(25.0) // true js里整数浮点数同样的存储方法，所以看作整数
 Number.EPSILON // 为浮点数运算设置一个误差范围，误差常量
 Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范围无法精确表示
-</pre>
+```
 
 #####String
 1. charAt()与[]（ie8+）作用一样，charCodeAt()返回字符编码
@@ -235,17 +235,17 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 1. js内，字符以utf-16格式存储，每个字符固定为两个字节，四个字符es5就不一定能正确处理了，可以借助es6的字符串方法来处理codePointAt()(代替charCodeAt),at()(es7中的代替charAt)String.fromCodePoint(UTF-16字符)
 2. 为了表示语调和重音符号，unicode提供两种方案：直接提供字符以及合成符号，js无法识别，normalize（）方法提供unicode正规化的统一方案
 3.
-  <pre>
+  ```js
   includes(str, startPos)
   startsWith(str, startPos)
   endsWith(str, startPos)从startPos向前搜
   'sb'.repeat(3) // 'sbsbsb'
-  </pre>
+  ```
 4. 字符串补全长度
-  <pre>
+  ```js
   'a'.padStart(5, 'ab') // 'ababa'
   's'.padEnd(5) // 's    '
-  </pre>
+  ```
 5. 模版字符串中可以调用函数
 6. **标签模版部分有待研究**
 
@@ -253,23 +253,23 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 1. **单体内置对象**为ecmascript提供的不依赖于宿主环境的对象
 2. **global**对象，所有全局函数与变量都是global对象的属性和方法
 3. 用utf-8编码替换所有字符
-  <pre>
+  ```js
   encodeURI() // 只替换空格
   encodeURIComponent() // 替换所有非字母数字字符
   decodeURI()
   decodeURIComponent()
-  </pre>
+  ```
 4. eval() 执行传入字符串js代码，不存在变量提升，代码在eval()执行的时候被创建
 5. global对象的所有属性undefined, NaN, Infinity, Object, Array, Function, Boolean, String, Number, Date, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError
 6. 浏览器环境下一般将global对象的属性及方法作为window对象的一部分实现
 7. Math对象提供的方法比自己写类似的快的多，常用的方法有
-  <pre>
+  ```js
   Math.random() // 返回一个0-1的随机数
   Math.max(a,b,c) // 返回最大值Max.max.apply(Math, array),类似的还有min
   Math.floor() // 向下取整
   Math.ceil() // 向上取整
   Math.round() // 四舍五入
-  </pre>
+  ```
 
 ##六、面向对象的程序设计
 
@@ -281,7 +281,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 5. 定义一个属性Object.defineProperty(对象，属性名，特性对象)，特性对象如不指定，均默认false，ie9+
 6. 访问器属性，不包含数据值，即其特性没有[[value]]以及相关的[[writable]]，包含一对get与set函数，常见用法为设置一个属性的值导致其它属性值变化,ie9+
 7. 详细定义多个属性Object.defineProperties()
-  <pre>
+  ```js
   Object.defineProperties(a, {
     va1: {
       value: 'val',
@@ -298,18 +298,18 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
       }
     }
   })
-  </pre>
+  ```
 8. Object.getOwnPropertyDescriptor(obj, prop),取得给定属性的特性对象，ie9+
 
 ####创建对象
 1. 读写操作中写是一个复合操作，首先要读（找到写入的位置）才能写，如a.b = 1，首先是读到a.b后再执行了写入操作
 2. constructor属性定义在prototype上，指向prototype属性所在的构造函数
-  <pre>
+  ```js
   prototypeA.isPrototypeOf(obj) // 判断某个prototype是否为某个对象的__proto__属性
   Object.getPrototypeOf(obj) // 代替__proto__属性，es5定义，ie9+
   obj1.getOwnProperty('propertyName') // 检查是否有该名字的实例属性
   delete obj1.prop1 // 只会删除实例属性
-  </pre>
+  ```
 3. 通过构造函数建完对象之后，对象通过prototype与构造函数保持联系，`obj.__proto__.constructor`指向构造函数，prototype为每个函数都有的一个属性，用处就是放点公用的东西
 4. Object.keys(obj)返回对象所有可枚举实例属性数组，ie9+
 5. 构造函数在不返回值的情况下，默认返回新对象实例，如果有返回值，可以重写调用构造函数时返回的值, 返回数组构造数组，返回对象构造对象
@@ -327,8 +327,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   - 变量解析的过程：顺着作用域链向上走
   - 函数内的变量的值在运行时确定
   前者相当于直接把i定义在了作用域1中，作用域2因为用到了i，而2中没有，顺着作用域链向上找，找到了1中定义的i，而当时i都变成9了；后者的话每次遍历都会生成一个新的作用域，里面有i，新作用域里的值在作用域1中是访问不到的，又因为这个作用域中的i值被外界引用`arr[i]`形成闭包，内容得不到释放，所在在最后运行的时候依然能访问到每一个小作用域2中生成时保存的值
-  <pre>
-  <pre>
+  ```js
   function test(){ // 作用域1
     var arr = [];
     for(var i = 0;i < 10;i++){
@@ -354,10 +353,9 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
     }
   }
   test();
-  </pre>
-  </pre>
+  ```
 2. 看起来是个闭包，其实不是，匿名函数的执行环境具有全局性，所以指向window
-  <pre>
+  ```js
   var name = "The Window";
 
   var obj = {
@@ -371,4 +369,4 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   };
 
   console.log(obj.getName()());
-  </pre>
+  ```
