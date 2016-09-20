@@ -219,7 +219,7 @@ Number.parseFloat('1.2#') // 1.2
 Number.isInteger(25.0) // true js里整数浮点数同样的存储方法，所以看作整数
 Number.EPSILON // 为浮点数运算设置一个误差范围，误差常量
 Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范围无法精确表示
-</pre>pre>
+</pre>
 
 #####String
 1. charAt()与[]（ie8+）作用一样，charCodeAt()返回字符编码
@@ -240,12 +240,12 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   startsWith(str, startPos)
   endsWith(str, startPos)从startPos向前搜
   'sb'.repeat(3) // 'sbsbsb'
-  </pre>pre>
+  </pre>
 4. 字符串补全长度
   <pre>
   'a'.padStart(5, 'ab') // 'ababa'
   's'.padEnd(5) // 's    '
-  </pre>pre>
+  </pre>
 5. 模版字符串中可以调用函数
 6. **标签模版部分有待研究**
 
@@ -258,7 +258,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   encodeURIComponent() // 替换所有非字母数字字符
   decodeURI()
   decodeURIComponent()
-  </pre>pre>
+  </pre>
 4. eval() 执行传入字符串js代码，不存在变量提升，代码在eval()执行的时候被创建
 5. global对象的所有属性undefined, NaN, Infinity, Object, Array, Function, Boolean, String, Number, Date, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError
 6. 浏览器环境下一般将global对象的属性及方法作为window对象的一部分实现
@@ -269,7 +269,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   Math.floor() // 向下取整
   Math.ceil() // 向上取整
   Math.round() // 四舍五入
-  </pre>pre>
+  </pre>
 
 ##六、面向对象的程序设计
 
@@ -298,7 +298,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
       }
     }
   })
-  </pre>pre>
+  </pre>
 8. Object.getOwnPropertyDescriptor(obj, prop),取得给定属性的特性对象，ie9+
 
 ####创建对象
@@ -309,7 +309,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   Object.getPrototypeOf(obj) // 代替__proto__属性，es5定义，ie9+
   obj1.getOwnProperty('propertyName') // 检查是否有该名字的实例属性
   delete obj1.prop1 // 只会删除实例属性
-  </pre>pre>
+  </pre>
 3. 通过构造函数建完对象之后，对象通过prototype与构造函数保持联系，`obj.__proto__.constructor`指向构造函数，prototype为每个函数都有的一个属性，用处就是放点公用的东西
 4. Object.keys(obj)返回对象所有可枚举实例属性数组，ie9+
 5. 构造函数在不返回值的情况下，默认返回新对象实例，如果有返回值，可以重写调用构造函数时返回的值, 返回数组构造数组，返回对象构造对象
@@ -354,7 +354,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
     }
   }
   test();
-  </pre>pre>
+  </pre>
   </pre>
 2. 看起来是个闭包，其实不是，匿名函数的执行环境具有全局性，所以指向window
   <pre>
@@ -371,4 +371,4 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   };
 
   console.log(obj.getName()());
-  </pre>pre>
+  </pre>
