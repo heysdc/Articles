@@ -90,7 +90,7 @@
   <pre>
   // Ui.js
   const ui = ({value}) => (
-    <span>{value}</span>
+    \<span\>{value}\<\/span>
   )
   export default ui
   // import ui
@@ -115,9 +115,9 @@
   <pre>
   let store = createStore(reducers)
   render(
-    <Provider store={store}>
+    \<Provider store={store}>
       <AllContainers />
-    </Provider>
+    \</Provider>
   )
   </pre>
 
