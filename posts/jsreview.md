@@ -59,6 +59,7 @@ function funcD(funcE) {
 }
 funcD(funcB) // 结果为‘a’,初步结论为作用域链为定义的时候确定的
 ```
+end
 7. es5执行环境的类型有两种：全局与函数，但有其他办法延长作用域链with与catch
 8. 搜索标识符顺着作用域链走，如果找到了就停了
 9. 垃圾收集的两种策略：
@@ -176,6 +177,7 @@ var a = {
   }
 }
 ```
+end
 3. arguments.callee指向arguments的函数
 4. this：函数据以执行的环境对象, 所谓环境对象的概念与之前提到的执行环境（execution context），执行环境中的定义的变量函数的集合－变量对象（vairable object）以及代码执行过程中变量对象所串起来的的作用域链(scope chain)没多大关系，指的是‘函数作为某一对象的方法被调用’中的‘某一对象’,
 5. 函数属性caller，保存调用当前函数的引用，全局作用域中其值为null，严格模式下，访问caller与callee会报错
@@ -241,11 +243,13 @@ startsWith(str, startPos)
 endsWith(str, startPos)从startPos向前搜
 'sb'.repeat(3) // 'sbsbsb'
 ```
+end
 4. 字符串补全长度
 ```javascript
 'a'.padStart(5, 'ab') // 'ababa'
 's'.padEnd(5) // 's    '
 ```
+end
 5. 模版字符串中可以调用函数
 6. **标签模版部分有待研究**
 
@@ -259,6 +263,7 @@ encodeURIComponent() // 替换所有非字母数字字符
 decodeURI()
 decodeURIComponent()
 ```
+end
 4. eval() 执行传入字符串js代码，不存在变量提升，代码在eval()执行的时候被创建
 5. global对象的所有属性undefined, NaN, Infinity, Object, Array, Function, Boolean, String, Number, Date, RegExp, Error, EvalError, RangeError, ReferenceError, SyntaxError, TypeError, URIError
 6. 浏览器环境下一般将global对象的属性及方法作为window对象的一部分实现
@@ -299,6 +304,7 @@ Object.defineProperties(a, {
   }
 })
 ```
+end
 8. Object.getOwnPropertyDescriptor(obj, prop),取得给定属性的特性对象，ie9+
 
 ####创建对象
@@ -310,6 +316,7 @@ Object.getPrototypeOf(obj) // 代替__proto__属性，es5定义，ie9+
 obj1.getOwnProperty('propertyName') // 检查是否有该名字的实例属性
 delete obj1.prop1 // 只会删除实例属性
 ```
+end
 3. 通过构造函数建完对象之后，对象通过prototype与构造函数保持联系，`obj.__proto__.constructor`指向构造函数，prototype为每个函数都有的一个属性，用处就是放点公用的东西
 4. Object.keys(obj)返回对象所有可枚举实例属性数组，ie9+
 5. 构造函数在不返回值的情况下，默认返回新对象实例，如果有返回值，可以重写调用构造函数时返回的值, 返回数组构造数组，返回对象构造对象
@@ -354,6 +361,7 @@ function test(){ // 作用域1
 }
 test();
 ```
+end
 2. 看起来是个闭包，其实不是，匿名函数的执行环境具有全局性，所以指向window
 ```javascript
 var name = "The Window";
@@ -370,3 +378,4 @@ var obj = {
 
 console.log(obj.getName()());
 ```
+end
