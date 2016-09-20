@@ -169,3 +169,48 @@ const thunk = (text) => {
 ```
 （2）不把action creater当正常的用，那就得一级一级传dispatch了，把store当一个单例引调用store.dispatch也会导致很多问题
 所以稍微正轨复杂点的项目推荐中间件redux-thunk，可以接受一个非正常的action creater
+
+##引入redux-immutable
+1. redux的immutable化原则上是：store部分为immutable，即reducer生成immutable数据，initialStore的初始化数据为immutable,action为正常对象，在container从store拿到immutable的数据之后要立马转成plain object，这是combineReducers的本体：
+```javascript
+function todoApp(state = {}, action) {
+  return {
+    visibilityFilter: visibilityFilter(state.visibilityFilter, action),
+    todos: todos(state.todos, action)
+  }
+}
+```
+可以看到直接从state属性里拿东西，所以如果state整个都是immutable的话,需要转换，还想用combineReducers的话可以借助redux-immutable库提供的同名方法，但如果只把属性值转为immutable显然更为契合官方的思路，也不需要引入redux-immutable库了
+```javascript
+// 需要redux-immutable的combineReducers，引入的第三方库里的reducer(如react-router-redux）必须也得兼容immutable
+store: fromJS({
+  a: {},
+  b: {}
+})
+
+// 不需要redux-immutable，可以直接用redux的combineReducers,第三方库的reducer可以直接用
+store: {
+  a: fromJS({}),
+  b: fromJS({}),
+  route: route
+}
+```
+
+2. 与redux-logger的兼容，来自[redux-logger文档](https://github.com/evgenyrodionov/redux-logger#transform-immutable-with-combinereducers)
+```javascript
+const logger = createLogger({
+  stateTransformer: (state) => { // 这里把state当作一个内部属性值为immutable的正常对象，如果将整个state转化为immutalbe，`state = state.toJS()`
+    let newState = {};
+
+    for (var i of Object.keys(state)) {
+      if (Immutable.Iterable.isIterable(state[i])) {
+        newState[i] = state[i].toJS();
+      } else {
+        newState[i] = state[i];
+      }
+    };
+
+    return newState;
+  }
+});
+```
