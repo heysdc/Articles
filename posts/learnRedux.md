@@ -87,15 +87,17 @@
 1. 在react中采用redux，需[把ui部分(presentational)和数据(container)分开](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0#.b3399zs0v)，只有数据部分与store相连
 2. 数据部分建议采用react-redux提供的connect()函数，提供了很多优化
 3. ui部分如果没有state可以采用函数式：
-    // Ui.js
-    const ui = ({value}) => (
-      <span>{value}</span>
-    )
-    export default ui
-    // import ui
-    import ui from './Ui.js'
+        ```js
+        // Ui.js
+        const ui = ({value}) => (
+          <span>{value}</span>
+        )
+        export default ui
+        // import ui
+        import ui from './Ui.js'
 
-    render(<ui value:='ss' />, document.getElementById('root'))
+        render(<ui value:='ss' />, document.getElementById('root'))
+        ```
 4. connect()需要两个特殊函数,这两个特殊函数都可以接受第二个参数ownProps为ui部分的属性
 (1)mapStateToProps: 确定要把store里的什么内容传给ui部分，参数为state，返回ui部分需要的属性
 (2)mapDispatchToProps:dispatch action，将dispatch传给ui部分，参数为dispatch，返回值为参数需要的属性
