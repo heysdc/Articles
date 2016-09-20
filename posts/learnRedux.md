@@ -12,6 +12,7 @@
 1. 向store发送的更改请求，一个对象
 2. 结构，除了一个字符串type表明类型，其它随意
 3. Action Creators, 只是为了生成标准action的函数，过滤外部垃圾数据获得有用的数据作为action传给reducer
+  
   ```js
   // Actions
   {
@@ -32,6 +33,7 @@
 2. store为一个对象，其设计原则，将数据state与ui state分开,store结构复杂建议采用normalizr's类似的数据结构保存
 3. reducer必须为纯函数式的：不改参数，无sideEffect，不调用非纯函数如Date.now()
 4. 建议使用过程中state中每个属性有专门的reducer负责
+
   ```js
   // state
   static state = {
