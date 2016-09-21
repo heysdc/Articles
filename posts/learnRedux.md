@@ -158,7 +158,7 @@
   }
   ```
 2. 试着自己表述一下，面对异步问题，首先调用异步行为可以在两个地方：
-（1）推荐的action creater，首先正常情况下action creater就不应该是异步的，因为action creater进行异步操作没有返回值，如下所示，会导致很多问题。
+  （1）推荐的action creater，首先正常情况下action creater就不应该是异步的，因为action creater进行异步操作没有返回值，如下所示，会导致很多问题。
 
   ```js
   // return undefined，expect action
@@ -178,7 +178,79 @@
   所以稍微正轨复杂点的项目推荐中间件redux-thunk，可以接受一个非正常的action creater
 
 ##middleware
-1. 
+1. middleware原理解析过程，以文档的logger为例
+
+  ```js
+  // 将改变前后的store打印出来
+  console.log(store.getState())
+  store.dispatch(action)
+  console.log(store.getState())
+
+  // 1.每个dispatch都要写一遍，直接把dispatch重写得了
+  store.dispatch = (store, action) => {
+    console.log(store.getState())
+    store.dispatch(action)
+    console.log(store.getState())
+  }
+  // 2.封装一下
+  const initialLogger = (store, action) => {
+    const next = store.dispatch
+    store.dispatch = function () {
+      console.log(store.getState())
+      next(action)
+      console.log(store.getState())
+    }
+  }
+  // 3.如果有多个需求呢，比如还有一个检查dispatch过程是否出错的
+  const initialLogger = (store) => {
+    const next = store.dispatch
+    store.dispatch = function (action) {
+      console.log(store.getState())
+      next(action)
+      console.log(store.getState())
+    }
+  }
+  const initialTest = (store) => {
+    const next = store.dispatch
+    store.dispatch = function (action) {
+      try {
+        next(action)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+  // 4.在3的基础上写个东西处理下
+  const handleMiddleware = (store, middlewares) {
+    middlewares = middlewares.slice(0)
+    middlewares.forEach((mid) => {
+      store.dispatch = mid(store, action)
+    })
+  }
+  // 5.然而采用直接覆盖dispatch的方法毫无意义，后面会覆盖前面，不如在原来dispatch的基础上不断更改，可以将3, 4修改为
+  const initialLogger = (store, next) => {
+    return (action) => {
+      console.log(store.getState())
+      next(action)
+      console.log(store.getState())
+    }
+  }
+  const initialTest = (store, next) => (action) => {
+    try {
+      next(action)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+  const handleMiddleware = (store, middlewares) {
+    middlewares = middlewares.slice(0)
+    const next = store.dispatch
+    middlewares.forEach((mid) => {
+      next = mid(store, next)
+    })
+    return Object.assign({}, store, { dispatch })
+  }
+  ```
 
 ##引入redux-immutable
 1. redux的immutable化原则上是：store部分为immutable，即reducer生成immutable数据，initialStore的初始化数据为immutable,action为正常对象，在container从store拿到immutable的数据之后要立马转成plain object，这是combineReducers的本体：
