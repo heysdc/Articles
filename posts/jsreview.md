@@ -336,48 +336,224 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 1. 原型链的基本思想，对象a的__proto__指向prototype，如果将prototype指向对象b,原型检索会在这断掉吗？不会，对象b也有自己的__proto__属性，最次也指向指向Object再指向Object的原型null即原型链的终点
 2. ``原型链继承``：通过原型链继承，缺点，继承是将父级的变成自己的，而下面代码则不是，继承过来的对象是所有子级所公用的，改了b1的一个属性（继承而来），b2也变了
 
-```js
-var A = function () {
-  this.a = [1, 2]
-}
-A.prototype.getA = function () {
-  return this.a
-}
-var B = function () {
-  this.b = 'b'
-}
-B.prototype = new A() // 原型继承
-var b1 = new B()
-b1.getA() // [1,2]
-b2.a.push(3) // [1,2,3]
-var b2 = new B()
-b2.getA() // [1,2,3]
-```
+  ```js
+  var A = function () {
+    this.a = [1, 2]
+  }
+  A.prototype.getA = function () {
+    return this.a
+  }
+  var B = function () {
+    this.b = 'b'
+  }
+  B.prototype = new A() // 原型继承
+  var b1 = new B()
+  b1.getA() // [1,2]
+  b2.a.push(3) // [1,2,3]
+  var b2 = new B()
+  b2.getA() // [1,2,3]
+  ```
 
-3. ``借用构造函数``: 通过在构造函数内调用构造函数达到继承父级构造函数的目的，缺点就是没有办法继承原型链
-```js
-var A = function (a) { this.a = a }
-A.prototype.aa = 'aa'
-var B = function (b) {
-  A.apply(this, b)
-}
-var b = new B('b')
-b.aa // undefined
-```
+3. ``借用构造函数``: 通过在构造函数内调用构造函数达到继承父级构造函数的目的，缺点：如果采用这种方法定义，公用方法都要写在父级的构造函数内，无法实现基于原型链的链式继承
 
-4. ``混合的``:
-var A = function (a) {
-  this.a = a
-}
-A.prototype.getA = function () {return a}
-var B = function (a) {
-  A.call(this, a) // 继承原型链的实例属性为自己的实例属性
-}
-B.prototype = new A() // 继承原型链
-var C = function (c) {
-  B.call(this, c)
-}
-C.prototype = new B()
+  ```js
+  var A = function (a) { this.a = a }
+  A.prototype.aa = 'aa'
+  var B = function (b) {
+    A.apply(this, b)
+  }
+  var b = new B('b')
+  b.aa // undefined
+  ```
+
+4. ``组合继承``:
+
+  ```js
+  var A = function (a) {
+    this.a = a
+  }
+  A.prototype.getA = function () {return a}
+  var B = function (a) {
+    A.apply(this, a) // 继承原型链的实例属性为自己的实例属性
+  }
+  B.prototype = new A() // 继承原型链，B.prototype里的a为undefined，被构造函数B里的a所覆盖
+  var C = function (c) {
+    B.apply(this, c) // 继续搞
+  }
+  C.prototype = new B()
+  var c = new C('sb') // 'sb'
+  ```
+4. `原型式继承`：浅复制了目标对象的内容，与原型模式相同的是引用类型的属性与父级共享相同的值，与原型模式不同的是原型式继承也继承了目标对象原型的值
+
+  ```js
+  var object = function (o) {
+    var newObj = function() {}
+    newObj.prototype = o
+    return new newObj()
+  }
+  ```
+  Object.create(obj, {}), 只传一个参数，与object相同作用，第二个参数作用，与definedProperties()方法作用相同，ie9+
+
+5.  组合继承里`B.prototype = new A()`这一步操作里的构造函数里的属性是被覆盖的，不好，需要继承的只是A的原型,即A的公共部分，这就是`寄生组合式继承`
+
+  ```js
+  var inheritFunc = function (sub, sup) {
+    sub.prototype = Object.create(sup.prototype)
+    sub.prototype.constructor = sub
+  }
+  ```
+
+####es6 Class
+1. class为es5的syntactic sugar,其实是es5的构造函数与原型，但不能当普通函数调用
+
+  ```js
+  // es6
+  class Point {
+    constructor(x, y) { // 构造函数
+      this.x = x
+      this.y = y
+    }
+
+    getArr () { // 原型方法，不可枚举
+      return [this.x, this.y]
+    }
+  }
+  var newClass= new Class Me {} () // Me在class内部调用的时候用，用不着可省略，最后的括号立即调用
+
+  // es5
+  function Point (x, y) {
+    this.x = x
+    this.y = y
+  }
+  Point.prototype.getArr = function () { // 定义的方法可枚举
+    return [this,x, this.y]
+  }
+  ```
+
+2. es6私有方法的常见情况：
+
+  ```
+  // 1. 加下划线标示
+  class Point () {
+    _getValue () {}
+  }
+  // 2. 移到class外
+  class Point () {
+    getValue (sb) {
+      getValues.apply(this, sb)
+    }
+  }
+  function getValues (sb) {
+    return this.snaff = sb
+  }
+  // 3. 利用symbol的唯一性，使第三方无法伪造属性值获取到私有方法
+  const bar = Symbol('bar')
+  const snaf = Symbol('snaf')
+  class Point () {
+    foo(baz) {
+      this[baz](baz)
+    }
+    [baz](baz) {
+      return this[snaf] = baz
+    }
+  }
+  ```
+3. this指向问题
+
+  ```js
+  class Point {
+    constructor () {
+      this.getValue = this.getValue.bind(this) // 1.new的时候即绑定this为Point
+    }
+
+    getValue () {
+      this.test()
+    }
+
+    <!-- 2.也可以换成箭头函数，需要es7的支持好像，箭头函数的由于没有自己的this，所以在定义的时候就已经确定下来了
+    getValue = () => {
+      this.test()
+    } -->
+
+    test () {
+      console.log('ss')
+    }
+  }
+
+  var p = new Point()
+  var d = p.getValue()
+  d() // ss
+  ```
+
+4. es6继承,通过extends继承，super指代父级的this，子集没有自己的this，是在父级的this之上修饰得到的,所以子集必须先调用super才能调用this
+
+  ```js
+  class Point {
+    constructor(x, y) { // 构造函数
+      this.x = x
+      this.y = y
+    }
+
+    getArr () { // 原型方法，不可枚举
+      return [this.x, this.y]
+    }
+  }
+  class ChildPoint extends Point {
+    constructor(x, y, color) {
+      super(x, y)
+      this.color = 'red'
+    }
+  }
+  ChildPoint.__proto__ === Point
+  ```
+
+5. es6可以通过extends继承内置构造函数如Array, Number等来创建自定义构造函数
+6. es6的getter,setter
+
+  ```js
+  class Myclass {
+    getter prop() {
+      return 'prop'
+    }
+    setter prot (val) {
+      console.log('i get a' + val)
+    }
+  }
+  ```
+
+7. 静态方法：加上static关键字的方法，只能直接通过类调用，不会被实例继承，但可以被子类继承
+  
+  ```js
+  class Methos {
+    static get() {
+      console.log('static')
+    }
+  }
+  Methos.get() //static
+  var test = new Methos()
+  test.get() // err
+  class C extends Methos{
+    constructor () {
+      super()
+      super.get() //static，可以通过super调用
+    }
+  }
+  C.get() //static
+  ```
+
+8. es6中只有静态方法，没有静态属性，es7提案支持静态属性
+
+9. new.target属性，构造函数中返回new命令作用的构造函数，class内部调用new.target，返回当前class
+
+  ```js
+  class Point {
+    constructor (){
+      if (new.target === Point) {
+        throw new Error('本类不能实例化')
+      }
+    }
+  }
+  ```
 
 ##七、函数表达式
 
