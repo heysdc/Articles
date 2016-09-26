@@ -334,7 +334,50 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 
 ####继承
 1. 原型链的基本思想，对象a的__proto__指向prototype，如果将prototype指向对象b,原型检索会在这断掉吗？不会，对象b也有自己的__proto__属性，最次也指向指向Object再指向Object的原型null即原型链的终点
-2.
+2. ``原型链继承``：通过原型链继承，缺点，继承是将父级的变成自己的，而下面代码则不是，继承过来的对象是所有子级所公用的，改了b1的一个属性（继承而来），b2也变了
+
+```js
+var A = function () {
+  this.a = [1, 2]
+}
+A.prototype.getA = function () {
+  return this.a
+}
+var B = function () {
+  this.b = 'b'
+}
+B.prototype = new A() // 原型继承
+var b1 = new B()
+b1.getA() // [1,2]
+b2.a.push(3) // [1,2,3]
+var b2 = new B()
+b2.getA() // [1,2,3]
+```
+
+3. ``借用构造函数``: 通过在构造函数内调用构造函数达到继承父级构造函数的目的，缺点就是没有办法继承原型链
+```js
+var A = function (a) { this.a = a }
+A.prototype.aa = 'aa'
+var B = function (b) {
+  A.apply(this, b)
+}
+var b = new B('b')
+b.aa // undefined
+```
+
+4. ``混合的``:
+var A = function (a) {
+  this.a = a
+}
+A.prototype.getA = function () {return a}
+var B = function (a) {
+  A.call(this, a) // 继承原型链的实例属性为自己的实例属性
+}
+B.prototype = new A() // 继承原型链
+var C = function (c) {
+  B.call(this, c)
+}
+C.prototype = new B()
 
 ##七、函数表达式
 
