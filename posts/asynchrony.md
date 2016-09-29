@@ -74,8 +74,89 @@
   a(1000).then((value) => {
     console.log('sb', value) // sss
   })
+
+  // 串联2
+  var a = () => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, 2000)
+    })
+  }
+  a()
+  .then(() => { // then返回的是一个promise，所以可以串联
+    return 'sb'
+  })
+  .then((val) => {
+    console.log(val) // 2s后输出sb
+  })
   
   ```
+- **catch**:.catch(callback) ＝ .then(null, callback)的别名，专门用于捕获错误
+  Promise错误具有冒泡性质，会一直传递直到被捕获为止
+  nodejs有一个unhandledRejection事件，专门监听未捕获的Rejected错误
+
+- **Promise.all()**:用于将多个Promise实例包装成一个新的Promise实例
+  Promise.all([promise1, promise2, ...]):参数可以不是数组，但必须有iterator接口，里面元素可以不是promise，那就调用promise.resolve()对其进行promise化
+  结果：都变为resolved，则返回一个数组传给回调函数，有一个为rejected，则返回第一个为rejected的错误
+
+  ```js
+  for (var i = 0; i <= 10; i++) { // 有的时候会有这种奇怪的需求
+    Api //调用接口，不知道哪个先完成
+  }
+
+  var promise1 = new Promise((resolve, reject) => {
+    var client = new XMLHttpRequest()
+    ...
+    client.onreadystatechange = handler
+    client.send()
+
+    function handler() {
+      if (this.status === 200) {
+        resolve(this.responce)
+      } else {
+        reject(new Error(this.statusText))
+      }
+    }
+  })
+
+  var promise2 = ...
+  var promises = Promise.all([promise1, promise2...]) // 同时调用多个接口（进行多个异步操作），等都完成了再处理
+  .then((promses) => {})
+  .catch((err) => {})
+  ```
+
+- **Promise.race()**:与Promise.all()传的参数一样，区别：哪个promise先返回结果了就返回哪个
+  常用前端控制调用时间，几秒内调用借口没反应就不掉了，报个错，可以一顶成都弥补promise无法取消的缺点：
+
+  ```js
+  var promise1 = new Promise((resolve, reject) => {
+    var client = new XMLHttpRequest()
+    ...
+    client.onreadystatechange = handler
+    client.send()
+
+    function handler() {
+      if (this.status === 200) {
+        resolve(this.responce)
+      } else {
+        reject(new Error(this.statusText))
+      }
+    }
+  })
+
+  var promise2 = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error(''链接超时，请检查网络''))
+    }, 10000)
+  })
+  var promises = Promise.race([promise1, promise2]) // 调借口10秒内没反应，setTimeout结果返回，报个错
+  .then((promses) => {})
+  .catch((err) => {
+    throw err
+  })
+  ```
+
+- **Promise.resolve**/**Promise.reject**：将现有对象转化为promise对象，参数如果是promise对象，原封不动返回；如果是其它,则相当于`new Promise((resolve) => resolve(args))`, 基本就是个立即执行的异步操作
+  `.then(() => {return a})`,这里的return a应该就是Promise.resolve(a),所以then里第一个参数可以返回一个promise，这个then后面的得等这个promise里resolve触发了才能继续进行
 
 ####参考
 [JavaScript：彻底理解同步、异步和事件循环(Event Loop)](https://segmentfault.com/a/1190000004322358)
