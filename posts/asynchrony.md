@@ -158,5 +158,122 @@
 - **Promise.resolve**/**Promise.reject**：将现有对象转化为promise对象，参数如果是promise对象，原封不动返回；如果是其它,则相当于`new Promise((resolve) => resolve(args))`, 基本就是个立即执行的异步操作
   `.then(() => {return a})`,这里的return a应该就是Promise.resolve(a),所以then里第一个参数可以返回一个promise，这个then后面的得等这个promise里resolve触发了才能继续进行
 
+##Generator
+- 什么是**generator**
+  **generator**函数是es6提供的一种**异步编程解决方案**，内部有多种状态，使用yield定义不同的内部状态，执行generator函数会返回这些状态构成的遍历器对象（而不会立即运行），可以通过调用遍历接口依次遍历generator函数内部的每一个状态
+  每次遍历都得到一个状态对象，其中value为yield或者return后面跟随表达式的值，没有return函数执行完毕为undefined
+
+  ```js
+  function* cons () {
+    yield 'hello'
+    return 'world'
+  }
+
+  var result = cons()
+  result.next() // {value: 'hello', done: false}
+  reuslt.next() // {value: 'world', done: true}
+  ```
+
+  - **yield**:不能用在普通函数中；在表达式中用要放括号里面，如`console.log(11, (yield 33))`；用作函数参数或者用于赋值表达式右边可以不用加括号
+  yield语句本身是没有返回值的，`var a = yield 1`a的值为undefined，但如果给next()传一个参数，就能赋给a一只值
+
+  ```js
+  function* a () {
+    var b = yield 233
+    console.log(b)
+  }
+  var c = a()
+  c.next()
+  c.next() // undefined
+
+  var d = a()
+  d.next()
+  d.next(3222) // 3222
+  ```
+
+- **throw()**方法
+  - generator函数返回的遍历器对象有一个throw方法，可以在函数体外抛出错误，在函数体内捕获
+
+    ```js
+    var gene = function * () {
+      try {
+        yield 1
+      } catch (e) {
+        console.log('nei')
+      }
+    }
+    var obj = gene()
+    obj.next()
+    try {
+      obj.throw('') // 'nei'
+    } catch (e) {
+      console.log('wai')
+    }
+    ```
+
+  - 如果generator函数内没有部署try……catch函数，则错误会被外部捕获
+
+  - 如果用遍历器对象的throw方法，则遍历器终止
+
+- **return()**方法: 立即终止函数，除非有try..finally
+  
+  ```js
+  var gene = function * () {
+    yield 1
+    yield 2
+    yield 3
+  }
+  var res = gene()
+  res.return(666) // {value: 666, done: true}
+  ```
+
+- **yield \* **语句：在generator函数内部调用另一个generator函数
+
+  ```js
+  function a * () {
+    yield 1
+    yield 2
+  }
+  function b * () {
+    yield 3
+    yield * a()
+    yield 4
+  }
+  for (let i of b()) {
+    console.log(i) // 3124
+  }
+  // b相当于
+  function b * () {
+    yield 3
+    for (let i of a()) { // 即后面接一个遍历器对象，如果遍历器对象的生成函数为generator且有返回值，则yield *可以被赋值
+      yield i
+    }
+    yield 4
+  }
+  // 写个函数取出嵌套数组的值
+  function * getValueOfArr (arr) {
+    if (Array.isArray(arr)) {
+      for (let i of arr) {
+        yield * getValueOfArr(i)
+      }
+    } else {
+      yield i
+    }
+  }
+  ```
+
+- 作为对象属性的generator函数,两种形式都可以
+  
+  ```js
+  var a = {
+    * b () {
+    },
+    c: function * () {
+    }
+  }
+  ```
+
+
 ####参考
 [JavaScript：彻底理解同步、异步和事件循环(Event Loop)](https://segmentfault.com/a/1190000004322358)
+[阮一峰的es6教程异步相关](http://es6.ruanyifeng.com/#docs/promise)
