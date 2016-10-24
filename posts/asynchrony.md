@@ -160,7 +160,7 @@
 
 ##Generator
 - 什么是**generator**
-  **generator**函数是es6提供的一种**异步编程解决方案**，内部有多种状态，使用yield定义不同的内部状态，执行generator函数会返回这些状态构成的遍历器对象（而不会立即运行），可以通过调用遍历接口依次遍历generator函数内部的每一个状态
+  **generator**函数是es6提供的一种**异步编程解决方案**，内部有多种状态，使用yield定义不同的内部状态，执行generator函数会返回这些状态构成的**遍历器对象(Iterator Object, 这个对象本身也具有Symbol.iterator属性，执行后返回自身)**（而不会立即运行），可以通过调用遍历接口依次遍历generator函数内部的每一个状态
   每次遍历都得到一个状态对象，其中value为yield或者return后面跟随表达式的值，没有return函数执行完毕为undefined
 
   ```js
@@ -175,7 +175,7 @@
   ```
 
   - **yield**:不能用在普通函数中；在表达式中用要放括号里面，如`console.log(11, (yield 33))`；用作函数参数或者用于赋值表达式右边可以不用加括号
-  yield语句本身是没有返回值的，`var a = yield 1`a的值为undefined，但如果给next()传一个参数，就能赋给a一只值
+  yield语句本身是没有返回值的，`var a = yield 1`a的值为undefined，但如果给next()传一个参数，就能赋给a一只值，next传入的参数代表上一个yield语句的返回值。这样可以从外部向函数体内注入值，在函数执行的不同阶段，从外部向内部注入不同的值，从而调整函数的行为
 
   ```js
   function* a () {
@@ -227,7 +227,7 @@
   res.return(666) // {value: 666, done: true}
   ```
 
-- **yield \* **语句：在generator函数内部调用另一个generator函数
+- yield*语句：在generator函数内部调用另一个generator函数
 
   ```js
   function a * () {
@@ -273,6 +273,69 @@
   }
   ```
 
+- generator函数的this: generator函数返回一个遍历器，这个遍历器是generator函数的实例，继承了generator函数的prototype对象上的方法，但不能当做普通构造函数调用，不返回this对象
+
+  ```js
+  var a = function * () {
+    this.a = 'a'
+  }
+  a.prototype.b = 'b'
+  let b = a()
+  b.a // undefined
+  b.b // 'b'
+  let c = new a() // Error
+  // 由于不能使用this对象,但可以继承prototype上的方法，所以可以将this指向prototype
+  var gene = function * () {
+    this.a = 'a'
+    yield this.b = 'b'
+  }
+  var thisGene = gene.call(gene.prototype)
+  ```
+
+- 异步应用:generator可以将异步的写法改为同步
+
+  ```js
+  var timeGene = function * () {
+    var a = yield setTime('sss')
+    console.log('a', a)
+    var b = yield setTime('sb')
+    console.log('a', b)
+  }
+  function setTime (val) {
+    setTimeout(() => {
+      timeGene.next(val) //里面调用next传参，其实就是将回调函数内拿到的值传到外面，实现同步化的写法
+    }, 2000)
+  }
+
+  timeGene = timeGene()
+  timeGene.next()
+
+  // 对比一下promise的写法
+  var timeGene = () => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, 2000)
+    })
+  }
+  timeGene()
+  .then(() => {
+    console.log('sss')
+    return new Promise((resolve) => {
+      setTimeout(resolve)
+    })
+  })
+  .then(() => {
+    console.log('sb')
+  })
+  ```
+  可以发现，同样是异步，promise写法是将回调拿出来，写在外面（作为then的参数）；而generator是利用可对next方法传参数得yield表达式值的特性，将回调函数内容外部化，从而达到异步操作同步化的目的
+
+##异步操作和Async函数
+
+  - 回调：将后续操作放入回调函数中，回调函数异步时被扔到工作线程，工作线程完成异步任务又把它扔到主线程的消息队列中，然后被主线程执行，如果回调函数里还有异步过程2，再将过程2的回调扔到工作线程，循环往复
+
+  - Promise：和回调类似，只不过所有回调函数都被扔到了then里面，同时进行了一系列的封装，如race,all等等
+
+  - Generator：异步函数不能像同步一样写，因为同步函数的执行是没有等待或者说暂停机制的，所以异步过程的后续操作只能存放于一个独立的空间中，如回调或者then里面。如果一个函数能在调用异步函数后暂停，在异步返回结果后继续运行，那么就可以实现异步过程的同步写法，这就是generator在异步中的应用。
 
 ####参考
 [JavaScript：彻底理解同步、异步和事件循环(Event Loop)](https://segmentfault.com/a/1190000004322358)
