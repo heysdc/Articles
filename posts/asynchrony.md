@@ -337,6 +337,143 @@
 
   - Generator：异步函数不能像同步一样写，因为同步函数的执行是没有等待或者说暂停机制的，所以异步过程的后续操作只能存放于一个独立的空间中，如回调或者then里面。如果一个函数能在调用异步函数后暂停，在异步返回结果后继续运行，那么就可以实现异步过程的同步写法，这就是generator在异步中的应用。
 
+  - 实现同步借助于generator函数体内外的数据交换机制，如下所示，可以在generator函数外部通过.next()将异步执行结果传入函数内部，但`var a = gene();a = a.next()`这些东西不太好管理，有点麻烦
+
+  ```js
+  var gene = function * () {
+    let url = 'www.sc.com'
+    let ans = yield fetch(url) // 在这停顿！
+    console.log('the result is ', ans)
+  }
+  var a = gene()
+  a.next().value
+  .then((ret) => {
+    return data.json()
+  })
+  .then((ret) => {
+    a.next(ret)
+  })
+  ```
+
+  - Thunk函数，首先说说求值策略（即函数的参数应该何时求值）
+
+    - 传值策略：进入函数体之前，就得出参数值，将算好的参数值传入函数
+
+    - 传名调用(call by name): 在用到它的时候才求值，其实现通常借用thunk函数，将临时函数传入函数体
+
+    ```js
+    var thunk = () => x + 5
+    function f(thunk) => thunk() * 2
+    ```
+
+  - js中的thunk函数：将多参数转为单参数版本，这个单参数版本的函数就叫thunk函数，一般来说是将普通函数参数与回调函数参数分开
+
+  ```js
+  fs.readFile(filename, callback)
+  // thunk
+  readFile = readFileThunk(filename)
+  readFile(callback)
+
+  function readFileThunk(filename) {
+    return function (callback) {
+      fs.readFile(filename, callback)
+    }
+  }
+  // thunk转换器
+  function thunk(fn) {
+    return function() {
+      var arg = Array.prototype.slice.call(arguments)
+      return function (cb) {
+        arg.push(cb)
+        return fn.apply(this, arg)
+      }
+    }
+  }
+
+  var fs = require('fs');
+  var thunkify = require('thunkify');
+  var readFile = thunkify(fs.readFile);
+
+  var gen = function* (){
+    var r1 = yield readFile('/etc/fstab');
+    console.log(r1.toString());
+    var r2 = yield readFile('/etc/shells');
+    console.log(r2.toString());
+  };
+
+  // es6
+  function thunk(fn) {
+    return function (...args) {
+      return function (cb) {
+        return fn.call(this, ...args, cb)
+      }
+    }
+  }
+  var reafileThunk = thunk(fs.readFile)
+  readfileThunk(filename)(cb)
+  ```
+
+  - generator函数与thunk函数的结合，实现generator函数的自动执行
+
+  ```js
+  // 还是以readfile为例子
+  var read = thunk(fs.readfile)
+  function gen * () {
+    var res = yield read('ss/a.js')
+    console.log('res', res.toString()
+    var res2 = yield read('sss/aa.js')
+    console.log('res2', res2.toString())
+  }
+  var res = gen()
+  res.next().value((err, data) => {
+    res.next(data).value((err, data) => {
+      res.next(data)
+    })
+  })
+  // generator自动执行器
+  var auto = function(gen) {
+    gen = gen()
+    var next = function (err, data) {
+      if (gen.next(data).done === true) {
+        return
+      }
+      result.value(next)
+    }
+    next()
+  }
+  ```
+
+  - 借助于promise对象实现generator函数的自动执行
+
+  ```js
+  var readFile = function (name) {
+    return new Promise((resolve) => {
+      fs.readFile(name, (err, data) => {
+        resolve(data)
+      })
+    })
+  }
+  var gen = function* (){
+    var r1 = yield readFile('/etc/fstab');
+    console.log(r1.toString());
+    var r2 = yield readFile('/etc/shells');
+    console.log(r2.toString());
+  };
+  // 自动执行
+  var auto = function (gen) {
+    var g = gen()
+    var next = function (data) {
+      var a = g.next(data)
+      if (a.done === false) {
+        a.value.then((ret) => {
+          next(ret)
+        })
+      }
+    }
+    next()
+  }
+  ```
+
 ####参考
 [JavaScript：彻底理解同步、异步和事件循环(Event Loop)](https://segmentfault.com/a/1190000004322358)
 [阮一峰的es6教程异步相关](http://es6.ruanyifeng.com/#docs/promise)
