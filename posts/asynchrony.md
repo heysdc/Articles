@@ -158,6 +158,78 @@
 - **Promise.resolve**/**Promise.reject**：将现有对象转化为promise对象，参数如果是promise对象，原封不动返回；如果是其它,则相当于`new Promise((resolve) => resolve(args))`, 基本就是个立即执行的异步操作
   `.then(() => {return a})`,这里的return a应该就是Promise.resolve(a),所以then里第一个参数可以返回一个promise，这个then后面的得等这个promise里resolve触发了才能继续进行
 
+- Promise的实现
+  
+  ```js
+  // case
+  var case = new Promise((resolve, reject) => {
+    setTimeout(resolve, 2000)
+  })
+  case.then((value) => {
+    console.log('sss', value)
+  })
+
+  function Promise(handle) {
+    this.data = undefined
+    this.status = 'pending'
+    this.resolve = []
+    var resolve = (value) => {
+      if (this.status === 'pending') {
+        this.status = 'resolved'
+        this.data = value
+        for (let i of this.resolve) {
+          i(value)
+        }
+      }
+    }
+    this.reject = []
+    var reject = (value) => {
+      if (this.status === 'pending') {
+        this.status = 'rejected'
+        this.data = value
+        for (let i of this.reject) {
+          i(value)
+        }
+      }
+    }
+    handle(resolve, reject)
+  }
+  Promise.prototype.then = function (onResolved, onRejected) {
+    switch (this.status) {
+      case 'pending':
+        return new Promise((resolve, reject) => {
+          this.resolve.push(function(value) {
+            var x = onResolved(this.data)
+            if (x instanceof Promise) {
+              x.then(resolve, reject)
+            }
+          })
+          this.reject.push(function(value) {
+            var x = onRejected(this.data)
+            if (x instanceof Promise) {
+              x.then(resolve, reject)
+            }
+          })
+        })
+      case 'resolved':
+        return new Promise((resolve, reject) => {
+          var x = onResolved(this.data)
+          if (x instanceof Promise) {
+            x.then(resolve, reject)
+          }
+          resolve(x)
+        })
+      case 'rejected':
+        return new Promise((resolve, reject) => {
+          var x = onRejected(this.data)
+          if (x instanceof Promise2) {
+            x.then(resolve, reject)
+          }
+        })
+    }
+  }
+  ```
+
 ##Generator
 - 什么是**generator**
   **generator**函数是es6提供的一种**异步编程解决方案**，内部有多种状态，使用yield定义不同的内部状态，执行generator函数会返回这些状态构成的**遍历器对象(Iterator Object, 这个对象本身也具有Symbol.iterator属性，执行后返回自身)**（而不会立即运行），可以通过调用遍历接口依次遍历generator函数内部的每一个状态
@@ -468,12 +540,44 @@
         a.value.then((ret) => {
           next(ret)
         })
+        
       }
     }
     next()
   }
   ```
 
+  ##async函数：async函数是generator函数的语法糖，将\*号转换为async，将yield换为yield，后接Promise，运行后自动执行
+
+  ```js
+  var readFile = function (name) {
+    return new Promise((resolve) => {
+      fs.readFile(name, (err, data) => {
+        resolve(data)
+      })
+    })
+  }
+  var asyncReadFile = async function () {
+    var a = await readFile('../a.js')
+    console.log('aa', a)
+    var b = await readFIle('b.js')
+    console.log('b', b)
+  }
+  asyncReadFile() // asyncReadFile自动执行，依次打印出a，b
+  // 自动执行原理，再写一遍
+  function auto (fun) {
+    var tmp = fun()
+    var next = function (data) {
+      var a = tmp.next(data)
+      if (a.value.done) return
+      a.value.then((ret) => {
+        next(ret)
+      })
+    }
+    next()
+  }
+  ```
+
 ####参考
-[JavaScript：彻底理解同步、异步和事件循环(Event Loop)](https://segmentfault.com/a/1190000004322358)
-[阮一峰的es6教程异步相关](http://es6.ruanyifeng.com/#docs/promise)
+- [JavaScript：彻底理解同步、异步和事件循环(Event Loop)](https://segmentfault.com/a/1190000004322358)
+- [阮一峰的es6教程异步相关](http://es6.ruanyifeng.com/#docs/promise)
