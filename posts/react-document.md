@@ -1,6 +1,10 @@
 #Learn Something New From React Document
 
-##Introducing JSX
+断断续续用了一年react，一直也没看过文档，读一遍，看看有什么收获。
+
+##Quick Start
+
+###Introducing JSX
 
 - **jsx**是js的语法扩展，编译之后jsx为js对象，所以可以把它当作变量来用
 
@@ -10,7 +14,7 @@
 
   **babel** compiles jsx down to React.createElement() calls
 
-##Rendering Elements
+###Rendering Elements
 
 - **react element**是不可变的,改变ui的唯一方法就是创建一个新的element
 
@@ -20,7 +24,7 @@
 
   **ReactDom** will compare the element and its children to the previous one, only update the changing parts of element to the dom
 
-##Components and Props
+###Components and Props
 
 - **components**将ui拆分成独立可复用的模块
 
@@ -34,7 +38,7 @@
 
   **components** must be pure, its inputs-props mustn't be changed，the props is read-only
 
-##State and Lifecycle
+###State and Lifecycle
 
 - 将**函数式component**变为**class component**需要将函数的内容放到class的render方法中
 
@@ -61,7 +65,7 @@
   }));
   ```
 
-##Handling Events
+###Handling Events
 
 - 不需要等dom创建之后addEventListener，只需要在首次渲染时监听事件即可
 
@@ -80,3 +84,51 @@
     return <UserDefinition onClick={(e) => {this.handleClick(e)}}>OK</UserDefinition> // wrong
   }
   ```
+
+###Conditional Rendering
+
+- js中，true && expression ==> expression, false && expression ==> false
+
+###Lists and Keys
+
+- 数组中的elements需要有**key**属性，react借助它标示数组中元素的变化
+
+  Element items in an array should have **key** property, react use it to identify which item have been changed, added or removed
+
+- 不能通过props拿到key属性，想访问key的值要通过其它属性名
+
+  cannot get props.key，set another property to get the value of key
+
+- 嵌套过深就可以考虑抽象出一个component
+
+  if a part of code is too nested, you should consider extracting a component
+
+###Forms
+
+- 在html中，<input><textarea><select>有自己的状态，根据用户输入更新状态，react的装套存在state中并且通过setState更新
+  
+  In html <input><textarea><select> have their own state and update it accroding to user input, but in react mutable state typically kept in state property state of components and update only by setState
+
+- **controlled component**把input的value绑到state上，通过onChange改变state从而把form的状态也集中到了**state**的上
+  
+  **controlled component** tie the value of element to the **state** and centralize the state of form to the state of react component
+
+###Lifting State Up
+
+###Composition vs Inheritance
+
+- **props.children**表示该component的所有子component
+
+  **props.children** is equal to all children component of this component
+
+- 通过**components**内置的**props**属性可以替代**继承**所起的作用
+
+  You can do everything that **inheritance** can do through the **props** of **components**
+
+##Advanced Guides
+
+###JSX in Depth
+
+- JSX 只是React.createElement(component, props, ..children)的语法糖
+
+  JSX is just syntacitc sugar of React.createElement
