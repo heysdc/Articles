@@ -132,3 +132,133 @@
 - JSX 只是React.createElement(component, props, ..children)的语法糖
 
   JSX is just syntacitc sugar of React.createElement
+
+- <A.B /> dot notation is also avaiable
+
+  ```js
+  var A = {
+    B: function (props) {
+      return <div>
+        {props.data}
+      </div>
+    }
+  }
+  function Content () {
+    return <A.B />
+  }
+  ```
+
+- **if** statements and **for** loops are not expressions in js
+
+  **expression**是值，可以放到任何需要一个值的地方，**statements**是行为，expression可以是statement，但state不能是expression
+
+  **expression** is a value, it can be used wherever needs a value, **statement** is an action, **expression** can be **expression statement**, but the reverse is no hold.
+
+- **props**默认值是true
+
+  **props** default to be true
+
+- **Spread Attribues** should be used sparingly
+
+  ```js
+  const props = {firstName: 'a', seconedName: 'b'}
+  return <Greeting {..props} />
+  ```
+
+- 通常，插入jsx的**表达式**的值为字符串，react元素或者由前两者组成的数组
+
+  **Expressions** inserted in jsx will evaluate to a string, a react component or a list of them
+
+- 只要可以最终可被react渲染，就可以作为自定义component的子元素
+
+  Children passed to a custom component can be anything, as long as it can be transformed to sth React can understand before rendering
+
+- **true**, **false**, **null**, **undefined**都是合法的子元素，只是不会被渲染出来
+
+  **true**, **false**, **null**, **undefined** are all valid children, they simply dont render
+
+- `{array1.length && <Message />}`，不行，因为如果前者为0，0可渲染，所以要保证为**boolean**
+
+  `{array1.length && <Message />}` is invalid because 0 can be rendered by react, so a pure boolean is needed here
+
+###Typechecking With PropTypes
+
+- **propTypes** is only checked in development mode
+
+- 没用过的PropTypes
+
+  ```js
+  PropTypes.node // anything that can be rendered
+  .element // react element
+  .instanceOf(constructor) // obj instanceof constructor
+  .oneOf([1, 2]) // one of specific values
+  .oneOfType([PropTypes.string, PropTypes.bool]) // one of specific types
+  .arrayOf(PropTypes.number) // array of a certain type
+  .obejctOf(PropsTypes.bool) // object with property values of certain type
+  .shape({a: PropTypes.object}) // particular shape
+  .any // any data type
+  function (props, propName, componentName) {if () {return new Error('')}} // customize
+  ```
+- single children
+
+  ```js
+  propTypes: {
+    children: PropTypes.element.isRequired
+  }
+  ```
+
+###Refs and the DOM
+
+- **ref**属性可以用在任何component上，属性值为一个回调函数，在mounted或unmounted后立即执行，该回调函数的参数为该component
+
+  **ref** is an attribute, it can be used in any component, its value is a callback which executes immediatelly when the component is mounted or unmounted, the parameter of callback is the component
+
+  ```js
+  <input type="text" ref={(input) => this.textInput = input}>
+  ```
+
+###Uncontrolled Components
+
+- 相比于可控表单用onChange改变value，用value覆盖dom的值，非可控表单用ref获取dom的值
+
+  The **controlled component** change value by onChange, overwrite the dom value with value attribute, **uncontrolled component** use ref to get value of the dom
+
+  ```js
+  <input defaultValue='inputValue' ref={(input) => this.input = input} />
+  ```
+
+- the default value of **uncontrolled component**:
+
+  **checkbox** and **radio**: **defaultChecked**
+
+  **select** and **text**: **defaultValue**
+
+###Optimizing Performance
+
+- **NODE_ENV=production** is also important when you use react online, for webpack you should also do following:
+
+  ```js
+  new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: JSON.stringify('production')
+    }
+  }),
+  new webpack.optimize.UglifyJsPlugin()
+  ```
+
+- react通过比较新旧dom来判断是否需要更新ui，**shouldComponentUpdate(nextProps, nextState)**默认返回true，如果返回false，则所有渲染过程不会触发，包括**render()**方法
+
+  react compare new dom with previous one to decide whether to update the ui, the hook function **shouldComponentUpdate** return true by default, if you make it return false in some cases, then all re-render process included the **render()** method won't start
+
+
+- 在只需要对新老props以及state进行浅比较，以决定是否需要更新ui的情况下可以采用**React.PureComponent**替代**React.Component**
+
+  If just want to decide whether to update ui by comparing new and previous props or state, **React.PureComponent** can be used instead of **React.Component**
+
+- 为了避免采用**PureComponent**时state改变不被**浅比较**识别，可以每次state改变产生一个新对象，比如采用Object.assign()方法，或者采用immutable库
+
+  To make every altering recognized by **shallow comparison** when using **PureComponent**, you can make a new object after every change by using **Object.assign** method or **immutable library**
+
+###Reconciliation
+
+- render方法可以认为创造了虚拟dom树，当state或者props更新的时候，render造了个新树与老树对比，然后由react根据差异决定如何更改ui
