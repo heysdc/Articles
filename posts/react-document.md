@@ -105,9 +105,9 @@
 
 ###Forms
 
-- 在html中，<input><textarea><select>有自己的状态，根据用户输入更新状态，react的装套存在state中并且通过setState更新
+- 在html中，`<input><textarea><select>`有自己的状态，根据用户输入更新状态，react的装套存在state中并且通过setState更新
   
-  In html <input><textarea><select> have their own state and update it accroding to user input, but in react mutable state typically kept in state property state of components and update only by setState
+  In html `<input><textarea><select>` have their own state and update it accroding to user input, but in react mutable state typically kept in state property state of components and update only by setState
 
 - **controlled component**把input的value绑到state上，通过onChange改变state从而把form的状态也集中到了**state**的上
   
@@ -133,7 +133,7 @@
 
   JSX is just syntacitc sugar of React.createElement
 
-- <A.B /> dot notation is also avaiable
+- `<A.B />` dot notation is also avaiable
 
   ```js
   var A = {
