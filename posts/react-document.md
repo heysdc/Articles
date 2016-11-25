@@ -1,6 +1,6 @@
 #Learn Something New From React Document
 
-断断续续用了一年react，一直也没看过文档，读一遍，看看有什么收获。
+断断续续用了一年react后读一遍文档，看看有什么收获。
 
 ##Quick Start
 
@@ -261,4 +261,107 @@
 
 ###Reconciliation
 
-- render方法可以认为创造了虚拟dom树，当state或者props更新的时候，render造了个新树与老树对比，然后由react根据差异决定如何更改ui
+- **render**方法创造了虚拟dom树，当state或者props更新的时候，render造了个新树与老树对比，然后由react根据差异决定如何更改ui
+
+  **render method** create a virtual dom tree at first, when state or props updated, render create a new tree and compare it with previous one, **react** need to figure out how to efficiently update the ui
+
+- react实现了O(n)的树比较算法基于以下两个假设，同时也是我们需要遵守的准则：
+
+  react realies on heuristics and the following two assumptions to achieve a O(n) algorithm, so our code should meet this two assumptions:
+
+  1. 两个不同类型的element将形成两个不同的树，所以不应该随意更改节点类型；
+
+  No.1 two different type nodes will lead to two different tree, so you should not arbitrarily changed the node type
+
+  2. 开发者通过key props标记兄弟元素，所以要保证节点唯一，稳定，可预知
+
+  No.2 developers should mark siblings with key property, so the key should be unique, stable and predictable
+
+####Diffing Algorithm
+
+当对两个树做比较，首先比较根节点：
+
+- **elements of different types**，根节点类型不同
+
+  移除原树，触发**componentWillUnmount**，其相关的state也没了；建新树，触发**componentWillMount**和**componentDidMount**
+
+  remove the previous tree, receive **componentWillUnmount**，the relevant component state is lost; create a new tree, receive **componentWillMount**, **render** and **componentDidMount**
+
+- **DOM elements of the same type**，类型相同的dom节点
+
+  只改变更改了的属性，递归对比其子节点
+
+- **component elements of the same type**，类型相同的component
+
+  **component**的属性为**props**，这就意味着**props**改变了，触发**componentWillReceiveProps**、 **componentWillUpdate** 和 **render**
+
+  the property of **component** is usually **props**, props changed will trigger **componentWillReceiveProps**、 **componentWillUpdate** and **render**
+
+- **recursing on children**
+
+  以下dom对比会导致性能问题，引入key标记子元素解决此问题，不建议采用元素所在位置序列号为key，若重排序会导致性能问题
+
+  following dom diffing will lead to efficiency problems, make each siblings have a unique key can solve this problem, use order number of location of the element is not suggested, reorders will be slow
+
+  ```js
+  // from
+  <ul>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+  // to
+  <ul>
+    <li>1</li>
+    <li>2</li>
+    <li>3</li>
+  </ul>
+
+###Context
+
+- 能不用尽量不用，api尚未稳定，以后可能修改，一般可用redux替代
+
+```js
+class Parent extends Component {
+  static childContextTypes = {
+    color: PropTypes.string
+  }
+  getChildContext () {
+    return {
+      color: 'red'
+    }
+  }
+  return () {
+    <div>
+      <Button />
+    </div>
+  }
+}
+class Button extends Component {
+  static contextTypes = { // if contextTypes is not defined, context will be an empty obj
+    color: PropTypes.string
+  }
+  render () {
+    return <button style={{color: this.context.color}}>
+      {this.props.children}
+    </button>
+  }
+}
+
+// functional components
+const Button = ({children}, context) => <button style={{background: context.color}}>{children}</button>
+Button.contextTypes = {color: PropTypes.string}
+
+// if use context
+constructor(props, context)
+componentWillReceiveProps(nextProps, nextContext)
+shouldComponentUpdate(nextProps, nextState, nextContext)
+componentWillUpdate(nextProps, nextState, nextContext)
+componentDidUpdate(prevProps, prevState, prevContext)
+```
+
+- **update context**, 虽然state或者props的改变会触发**getChildContext**，但是子元素的重渲染不会被触发，因为shouldComponentUpdate只被state和props的改变触发，所以常规更改不可行
+
+  **update context** shouldn't be done. Even though changing state or props will trigger **getChildContext**, but its children component wont re-render for their state and props haven't e changed
+
+##REFERENCE
+
