@@ -28,7 +28,7 @@
 
 - **components**将ui拆分成独立可复用的模块
 
-  **components**split ui into independent, reusable pieces
+  **components** split ui into independent, reusable pieces
 
 - react将自定义component的属性包装成一个单独的对象，**props**
 
@@ -105,7 +105,7 @@
 
 ###Forms
 
-- 在html中，`<input><textarea><select>`有自己的状态，根据用户输入更新状态，react的装套存在state中并且通过setState更新
+- 在html中，`<input><textarea><select>`有自己的状态，根据用户输入更新状态，react的状态存在state中并且通过setState更新
   
   In html `<input><textarea><select>` have their own state and update it accroding to user input, but in react mutable state typically kept in state property state of components and update only by setState
 
@@ -150,7 +150,7 @@
 
 - **if** statements and **for** loops are not expressions in js
 
-  **expression**是值，可以放到任何需要一个值的地方，**statements**是行为，expression可以是statement，但state不能是expression
+  **expression**是值，可以放到任何需要一个值的地方，**statements**是行为，expression可以是statement，但statement不能是expression
 
   **expression** is a value, it can be used wherever needs a value, **statement** is an action, **expression** can be **expression statement**, but the reverse is no hold.
 
@@ -315,6 +315,7 @@
     <li>2</li>
     <li>3</li>
   </ul>
+  ```
 
 ###Context
 
@@ -365,3 +366,6 @@ componentDidUpdate(prevProps, prevState, prevContext)
 
 ##REFERENCE
 
+###Top-Level API
+
+- 
