@@ -8,3 +8,4 @@
 ###[flex](./posts/flex.md)
 ###[unix入门](./posts/unixTutorial.md)
 ###[字符编码](./posts/characterEncoding.md)
+###[浏览器的上传下载相关知识梳理](./posts/downloadAndUpload.md)
