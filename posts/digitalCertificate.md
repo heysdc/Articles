@@ -7,3 +7,5 @@
 ##参考
 
 - [数字签名是什么](http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html)
+
+- [数字证书原理](http://www.cnblogs.com/JeffreySun/archive/2010/06/24/1627247.html)

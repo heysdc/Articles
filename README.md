@@ -7,5 +7,4 @@
 ###[react native文档](./posts/rn.md)
 ###[flex](./posts/flex.md)
 ###[unix入门](./posts/unixTutorial.md)
-###[数字证书与数字签名](./posts/unixTutorial.md)
 ###[字符编码](./posts/characterEncoding.md)
