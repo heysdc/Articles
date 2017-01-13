@@ -627,16 +627,16 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 
 5. 函数声明存在变量提升，前提是在同一{}内
 
-```js
-console.log(ss()) // 报错，ss不会提升到这一层
+  ```js
+  console.log(ss()) // 报错，ss不会提升到这一层
 
-{
-  console.log(ss())
-  function ss () {
-    console.log(111)
+  {
+    console.log(ss())
+    function ss () {
+      console.log(111)
+    }
   }
-}
-```
+  ```
 
 6. arguments.callee可以实现递归调用与函数名的解耦，但严格模式下禁用，可以采用命名函数表达式的方式`var a = function ss(){ss()}`
 
