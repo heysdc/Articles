@@ -1,4 +1,4 @@
-#跨源资源共享
+#AJAX跨源资源共享
 
 处于安全考虑，XHR对象实现的ajax，只能访问与包含它的页面处于同一域的资源，但有很多需求要求跨域
 
@@ -102,3 +102,39 @@ CORS出现以前，也要实现跨域ajax通信。开发人员想出了一些办
 
 ###图像Ping
 
+img标签引用一个src地址，实质上是一个get请求，可以利用img可跨域的特点向服务器发送单向的请求。
+
+通过监听load与error事件，虽然得到任何实质性的数据，但可以知道响应什么时候收到。
+
+###JSONP
+
+json with padding的简写，jsonp与json类似，只不过被包含在函数调用中
+
+jsonp包含两部分：回调函数和数据
+
+原理及过程：
+
+- 创建一个script标签利用src请求一段js代码，src带个参数callback=，后面接回调函数的名字，本地把该回调函数准备好
+
+  ```js
+  function foo (data) {
+    console.log('data!', data)
+  }
+
+  var script = document.createElement('script');
+  script.setAttribute("type","text/javascript");
+  script.src = 'http://example.com/ip?callback=foo';
+  document.body.appendChild(script);
+  ```
+
+- 服务器配合，返回一段jsonp代码，就是回调函数+参数
+
+  ```js
+  foo({
+    a: 'a'
+  })
+  ```
+
+- 浏览器端，由于是用script标签直接请求，所以请求到的js代码直接运行，就成功实现了处理回参
+
+缺点：要保证请求数据的安全，确认是否失败不太容易，一般用作超时处理
