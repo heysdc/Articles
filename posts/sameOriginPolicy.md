@@ -101,7 +101,7 @@ message事件的事件对象event的属性：
 
 ##AJAX
 
-参见AJAX跨域资源共享
+参见[AJAX跨域资源共享](https://github.com/heysdc/Articles/blob/master/posts/cors.md)
 
 ##参考
 

@@ -299,4 +299,365 @@
     }
   });
   ```
+
+#redux复习
+
+##1.1动机
+
+随着单页应用的复杂化，state多且与ui相互作用
+
+##1.2核心概念
+
+state，如下，但其它的代码不能随意修改它，想更新它的数据，必须发起一个action
+
+```js
+state = {
+  todos: [{
+    text: 'Eat food',
+    completed: true
+  }, {
+    text: 'Exercise',
+    completed: false
+  }],
+  visibilityFilter: 'SHOW_COMPLETED'
+}
+```
   
+action就是一个描述要改变什么的对象
+
+```js
+action = {
+  type: 'ADD_AN_ARTICLE',
+  name: 'hello world'
+}
+```
+
+reducer将action与state连接起来，reducer就是一个接收state和action的函数，然后返回一个新的state
+
+```js
+function visibilityFilter(state = 'SHOW_ALL', action) {
+  if (action.type === 'SET_VISIBILITY_FILTER') {
+    return action.filter;
+  } else {
+    return state;
+  }
+}
+
+function todos(state = [], action) {
+  switch (action.type) {
+  case 'ADD_TODO':
+    return state.concat([{ text: action.text, completed: false }]);
+  case 'TOGGLE_TODO':
+    return state.map((todo, index) =>
+      action.index === index ?
+        { text: todo.text, completed: !todo.completed } :
+        todo
+   )
+  default:
+    return state;
+  }
+}
+function todoApp(state = {}, action) {
+  return {
+    todos: todos(state.todos, action),
+    visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+  };
+}
+```
+
+##1.3三大原则
+
+1. 单一数据源，整个state被存储在一棵树中，这棵树只存在于唯一store中
+
+  好处，便于同构，便于调试，便于实现“撤销／重做”
+
+2. state只读，唯一改变state的方法是触发action
+
+  修改通过提交action集中处理state的修改，防止race condition
+
+3. 使用纯函数执行修改
+
+##1.4 先前技术
+
+redux不在意如何存储state，因此可以放心采用immutable库
+
+##2.1 action
+
+一般调用action creators函数创建一个action，然后将action传给dispatch函数`dispatch(action)`
+
+##2.2 reducer
+
+(preState, action) => newState，reducer是纯函数，不要在其中做以下操作：
+
+- 修改传入参数
+
+- 执行有副作用操作，如api请求与路由跳转
+
+- 调用非纯函数
+
+```js
+function todoApp(state=initialState, action) {
+  switch (action.type) {
+    case 'add':
+      return Object.assign({}, state, {lists: [...action.lists, ...state.lists]})
+    default:
+      return state
+  }
+}
+```
+
+拆分合并reducer
+
+```js
+function listsFilter(state=[], action) {
+  switch (action.type) {
+    default:
+      return state
+  }
+}
+function todoApp(state={}, action) {
+  return {
+    listsFilter: listsFilter(state.listsFilter, action),
+    todos: getTodos(state.todos, action)
+  }
+}
+// todoApp可以简写为
+import { combineReducers } from 'redux'
+var todoApp = combineReducers({
+  listsFilter,
+  todos: getTodos
+})
+```
+
+小tips，可以将所有顶级reducer放在一个文件中，然后通过`import * as reducers from './reducers.js';combineReducers(reducers)`
+
+##2.3 store
+
+action描述“发生了什么”，reducer根据action更新state的用法，store将它们联系到一起。store有以下职责：
+
+- 维持应用的state
+
+- 获取state，getState()方法
+
+- 更新state, dispatch(action)方法
+
+- 注册监听器, subscribe(listener)
+
+- 注销监听器，调用subscribe返回的函数
+
+redux单一store，当需要拆分逻辑，应该使用reducer组合而非创建多个store
+
+根据已有的reducer创建store非常容易，直接用createStore方法，第二个参数可选的，用于设置state初始状态，同构时非常有用，使客户端接受服务端state用于本地数据初始化
+
+```js
+import { createStore } from 'redux'
+import todoApp from './reducers'
+let store = createStore(todoApp)
+```
+
+```js
+let unsubscribe = store.subscribe(() => {
+  console.log(store.getState())
+})
+```
+
+store的简单实现
+
+```js
+let createStore = function(reducer, initialStore) {
+  let storeInfo = reducer(initialStore, {})
+  let scribe = () => {}
+  return {
+    dispatch: function(action) {
+      scribe()
+      storeInfo = reducer(storeInfo, action)
+    },
+    subscribe: function(func){
+      scribe = func
+      return () => {
+        scribe = () => {}
+      }
+    },
+    getState: () => storeInfo
+  }
+}
+```
+
+##2.4 数据流
+
+严格的单项数据流是redux的核心，优势：数据遵循相同的生命周期，让应用变得更加可预测且容易理解
+
+dispatch(action) => reducer(state, action) => 分到各个子reducer最终合成一个父state => 最终将生成的新state保存在store中
+
+##2.5 搭配react
+
+redux与react间没有关系，但搭配较好，因为react允许以state的形式描述界面
+
+redux的react绑定库基于容器组件和展示组件相分离的开发思想。
+
+展示组件：描述如何展现（骨架、样式）       不使用redux 数据来源props    数据修改从props调用回调函数
+
+容器组件：描述如何运行（数据获取、状态更新）  使用redux 来源redux的state 数据修改通过redux提交action
+
+展示组件例子:
+
+```js
+import React, { PropTypes } from 'react'
+import Todo from './Todo'
+
+const TodoList = ({ todos, onTodoClick }) => (
+  <ul>
+    {todos.map(todo =>
+      <Todo
+        key={todo.id}
+        {...todo}
+        onClick={() => onTodoClick(todo.id)}
+      />
+    )}
+  </ul>
+)
+
+TodoList.propTypes = {
+  todos: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    completed: PropTypes.bool.isRequired,
+    text: PropTypes.string.isRequired
+  }).isRequired).isRequired,
+  onTodoClick: PropTypes.func.isRequired
+}
+
+export default TodoList
+```
+
+容器组件组件的职责是把展示组件和store连接起来
+
+容器组件分为两部分：
+
+- 订阅store，变化的时候及时拿到最新信息
+
+- 更改store，传个action给redux
+
+```js
+import { connect } from 'react-redux'
+import { setVisibilityFilter } from '../actions'
+import Link from '../components/Link'
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    active: ownProps.filter === state.visibilityFilter
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    onClick: () => {
+      dispatch(setVisibilityFilter(ownProps.filter))
+    }
+  }
+}
+
+const FilterLink = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Link)
+
+export default FilterLink
+```
+
+自己实现一下：
+
+```js
+class Provider extends Component {
+  getChildContext = () => {
+    return {store: this.props.store}
+  }
+  render () {
+    return React.Children.only(this.props.children)
+  }
+}
+
+Provider.childContextTypes = {
+  store: React.PropTypes.object
+}
+
+let connect = (mapStateToProps, mapDispatchToProps) => (Component) => {
+  class NewComp extends components {
+    state = {
+      store: this.context.store.getState()
+    }
+    componentDidMount () {
+      this.context.store.subscribe = () => {
+        this.setState({
+          store: this.context.store.getState()
+        })
+      }
+    }
+    render () {
+      return <Component
+        {
+          ...mapStateToProps(this.state.store)
+        }
+        {
+          ...mapDispatchToProps(this.context.store.dispatch)
+        }
+      />
+    }
+  }
+  NewComp.contextTypes = {
+    store: React.PropTypes.object
+  }
+  return NewComp
+}
+```
+
+##3.3 Middleware
+
+发生在action被发起
+
+思路：
+
+```js
+// 1. 手动记录
+console.log('dispatching', action)
+store.dispatch(action)
+console.log('new state', store.getState())
+
+// 2. 封装dispatch
+store.dispatch = (store, action) => {
+  console.log('dispatching', action)
+  store.dispatch(action)
+  console.log('new state', store.getState())
+}
+// 3. monkeypatching dispatch
+var next = store.dispatch
+store.dispatch = (store, action) => {
+  console.log('dispatching', action)
+  next()
+  console.log('new state', store.getState())
+}
+// 4. 不直接替换，而是返回新的dispatch
+var logger => store => action => {
+  console.log('dispatching', action)
+  store.dispatch(action)
+  console.log('new state', store.getState())
+}
+var applyMiddleware = (store, middlewares) => {
+  middlewares.forEach(middleware => {
+    store.dispatch = middleware(store)
+  })
+}
+// 5. 非monkey patch
+var logger = store => next => action => {
+  console.log('dispatching', action)
+  next(action)
+  console.log('new state', store.getState())
+}
+var applyMiddleware = (store, middlewares) => {
+  var dispatch = store.dispatch
+  middlewares.forEach((middleware) => {
+    dispatch = middleware(store)(dispatch)
+  })
+  return Object.assign({}, store, { dispatch })
+}
+```
+

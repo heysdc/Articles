@@ -652,7 +652,9 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 
   - 环境栈(context stack)：代码运行肯定是在某个执行环境中，首先是在最外围的全局执行环境，当执行流进入一个新的执行环境，这个执行环境就会被推入环境栈中，执行完毕，将这个执行环境从环境栈中推出，将控制权返回给上一级执行环境
 
-  - 活动对象(activation object)：执行流所执行过的变量和参数，可以被后续访问到，可以理解为变量对象中被赋值过的属性及其值组成的对象
+  - 活动对象(activation object)：一个执行环境中所有定义、声明、参数所组成的对象
+
+  - 作用域(scope)：能访问到的变量、对象以及函数，个人认为可当作活动对象
 
   - 作用域链(scope chain)：本质上是一个指向变量对象的指针列表，本来以为是指向活动对象的指针列表，其实不是，具体解释参见[javascript执行环境详解](https://github.com/heysdc/Articles/blob/master/posts/executionContext.md)
 
