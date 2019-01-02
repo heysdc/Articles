@@ -1,17 +1,25 @@
 # javascriptReview
 复习，js高级程序设计(第三版)，主要是记一下自己之前没记住的，温故知新；既然都看es5了，顺带看看es6
 
-##一、js简介
+## 一、js简介
 1. js起源：一开始网页是静态的，但得有交互啊，为了提交表单，弄了个js
 2. js包括三部分：
   (1) emcascript，当年netscape与ie搞了俩js，为了统一，就找**ecma**弄了个js标准，规定了最基本的语法、类型、语句、操作符等
   (2) **dom**与（3）**bom**均为语言的扩展，即负责语言核心（ecmascript）与运行环境（通常为浏览器）的交互。dom为针对html的应用程序接口，即操控页面html的，但是后来又进行了扩展dom1级2级3级，除了对节点进行操作还能对dom样式、事件、验证、保存等进行一系列扩展操作等。dom一开始也是因为NI大战由w3c规划的，其它语言也有自己的dom标准如svg
   (3) **bom，browser object model**，控制浏览器显示页面以外的部分，习惯上把所有针对浏览器的js扩展都算作bom，如弹出新窗口，获取窗口信息，获取分辨率信息等，直到h5的出现，bom无标准的混乱状况才得到解决
 
-##二、在html中使用js
+## 二、在html中使用js
 1. script标签为同步加载，不放head里因为加载js慢的话html加载不进来，导致页面空着，所以一般放最后，该标签还有个defer和async属性可选
+2. script标签的defer, async属性
+[](../imgs/113455688.png)
 
-##三、基本概念
+## 三、基本概念
+
+- 语法
+- 数据类型
+- 流控制语句
+- 函数
+
 1. 严格模式：在js文件开始处或者函数内部开始处加个 "use strict"; 这是一个非常厉害的编译指示，用于告诉js引擎切换到严格模式，ie10以上才支持
 2. 如果省略操作符var直接定义变量将直接创建一个全局变量
 3. 基本数据类型：object, null, undefined, string, number, boolean
@@ -22,28 +30,29 @@
 6. 不要测试某个特定的浮点数值，0.1+0.2 !== 0.3，特大或者特小的数1e2 === 100
 7. js数值取值范围5e-324~1.8e308大了Infinity小了-Infinity，Number.NEGATIVE_INFINITY Number.POSITIVE_INFINITY分别保存极大值与极小值 isFinite()判断某个数是否超出范围
 8. isNaN（）函数，判定转换完之后的数值（如果是对象先判断valueOf方法，不等则再调用toString（）方法）是否不是数，NaN与任何值都不相等，包括其自身
-9. parseInt（） es5已经不自动识别八进制了，可以指定第二个参数，转换时使用的基数
+9. parseInt（） es5已经不自动识别八进制了，可以指定第二个参数，转换时使用的基数。二进制的相互转换：parseInt(num, 2)与num.toString(2)
 10. 字符串中转义序列为反斜杠\如\n\t
 11. emcascript中字符串可不改变，一旦创建，不可更改
 12. 六种基本类型除了null、undefiend之外都有toString()方法，如果值可能为null或者undefined，可以采用String（）函数，其规则：1有toString（）方法调用这个，如果为null或者undefined返回‘null’，‘undefined’
 13. es中对象就是一组数据与功能的集合（属性与方法）,Object类型是所有js实例的基础
 14. Object所具有的方法.valueOf()返回对象的字符串、数值或者布尔值表示，通常与toString()方法的返回值相同
-15. ECMA中的对象（即js内置对象）的属性和方法不一定适用于其它对象（浏览器环境中的对象bom、dom中的对象（宿主对象）以及自定义对象）
+15. ECMA中的对象（即js内置对象）的属性和方法不一定适用于其它对象（浏览器环境中的对象bom、dom中的对象（宿主对象）以及自定义对象），即不一定继承自Object对象
 16. 递增递减操作符，前置优先级与执行语句优先级相同，后知优先级较低，即1++ + 2为3，＋＋1 ＋ 2 为4，此操作符可以用于字符串对象等的计算，还是那套转换规则
 17. 一元加减操作符业可以用于非数值，转换规则同Number（）方法，可以用于转换字符串＋‘－1’为－1
 18. 乘性操作符＊／％操作数为非数值自动类型转换Number（）
 19. +有任一个操作数为字符串，则另外的调用String()方法
 20. 关系操作符（大小等于）如果都为字符串，比较的是首字母的字符编码值；如果一个是数字，另一个往数字转
-21. 相等和不相等：先转换再比较，nullundefined不会被转换；全等不全等：直接比较，不转换
-22. 逗号可以用于赋值，总会返回最后一项var a = (1, 2, 3, 4)注意括号，a为4
+21. 相等和不相等：先转换再比较，null, undefined不会被转换；全等不全等：直接比较，不转换
+22. 逗号总会返回最后一项var a = (1, 2, 3, 4)注意括号，a为4
 23. ecmascript对象属性没有顺序
 24. label语句，在代码中加标签，以便将来适用 label:statement；常见的应用场合，与break continue配合使用,如label:for(){for(){if() break label;}}触发break直接终止内外两层循环
 25. with语句with(obj){statement；}将代码作用域设置到特定的对象中，缺点：性能差，调试麻烦，不建议用
 26. switch语句中，case的值可以为变量或表达式；switch在比较的时候不会发生类型转换
 27. js中传参为按值传递，严格模式下不能修改arguments的值
 28. 重载：为一个函数编写多个定义，在js中可以用检查arguments长度来变相实现
+20. 非严格模式下，才可以修改arguments的值，与参数同步
 
-##四、变量、作用域和内存问题
+## 四、变量、作用域和内存问题
 1. js不允许直接访问内存中的位置，通过引用访问对象，这个引用实际上是指针
 2. 检查基本类型可以用typeof，null返回object，检测具体对象可以用instanceof，检测是否为某个类型对象的实例
 3. 执行环境(execution context)决定了变量或函数有权访问的其它数据，每个执行环境有个一个变量对象(vairable object)，环境中定义的所有变量和函数都保存在这个对象中
@@ -78,15 +87,15 @@
 10. js优化内存的方法：解除全局对象的引用，局部对象在局部环境弹出的时候会被回收，然而全局对象不会，可以在不用的时候手动解除（赋null）
 11. 分配给web浏览器的内存比分配给桌面程序的少，防止网页耗尽内存导致系统崩溃
 
-##五、引用类型
-####对象
-######es5
+## 五、引用类型
+#### 对象
+###### es5
 1.  什么是引用类型？*ecmscript中，引用类型是一种数据结构，将数据和功能组织在一起，常被称为类*。引用类型也被称为**对象定义**，因为它们描述的是一类对象所具有的属性和方法。常见的引用类型如Object, Boolean, Array等等。对象是某个特定引用类型的实例。比如`var a = new Array()`可以理解为通过引用类型Array创建了一个数组实例，Array引用类为新对象定义了默认的属性和方法。
 2.  `var a = {}`这里的｛表示表达式上下文的开始。*ecmascript中**表达式上下文（expression context）**指的是能返回一个值*，赋值后面要跟一个值，所以是表达式上下文。**语句上下文(statement context)**表示一个语句块的开始。如`if (expression context) {statement context}`
 3.  `function func(args) { if (typeof args.name === 'string') {return} }`遇到需要传入大量可选参数的函数，最好用对象字面量封装多个可选参数
 
 
-#####es6
+##### es6
 1. 属性简洁表示法：`var a = {a, b () {}}`等同于`var a = {a: a, b: function(){}}`
 2. Object.is(a, b)相当于a === b，不同的是NaN等于自身，正负0不相等。
 3. Object.assign(targetObj, sourceObj...)将不同对象的属性浅赋值到对象对象中
@@ -96,7 +105,7 @@
 7. **Rest参数**: `let {a, ...b} = {a: 1, b: 2, c: 3, d: 4}`从一个对象取值，将将所有可遍历但尚未读取的属性分配到指定的对象上；**扩展运算符**: 取出参数对象的所有可遍历属性复制到对象中，相当于assign，`let test = {x: 1, ..y} = Object.assign({x: 1}, y)`
 *身体不舒服，待续*
 
-####数组
+#### 数组
 1. length属性不是只读的，通过给它赋值可以增减数组长度
 2. 一个页面多个框架，每个框架都有自己的全局执行环境，不同执行环境的构造函数Array构造函数不同
 3. 判断数组方法，a instanceof Array, 更保险的Array.isArray()(ie9+)
@@ -106,7 +115,7 @@
 7. slice(起始项，最后一项的后一项)splice(起始项， 删除的项数，添加的项目)返回从数组中删除的项
 8. indexOf,lastIndexOf,reduce,reduceRight(均为ie9+)后两者为归并方法，reduce((pre, cur, index, arr) => nextPre, firstPre)如果firstPre不指定则默认为第一项
 
-#####es6
+##### es6
 1. Array.from(arrLike, (val, key) => {this}, this),将类数组对象（即存在length属性）与内置iterator接口的数据结构变成数组,第二参数与map类似，如果里面用到this还可以用第三参数绑定this
 2. Array.of()弥补Array()传入参数不同生成数组不同的尴尬
 3. copyWithin(targetPos, start = 0, end = this.length)会修改当前数组
@@ -116,7 +125,7 @@
 7. includes()是否包含指定值，主要对NaN支持较好另外语义明显点
 8. 数组的空位，标示数组某一个位置没有任何值，也没有undefined，Array(3),es5对空位处理不一致（一般跳出join,toString按undefined处理），es6统一按undefined处理
 
-####Date
+#### Date
 1. Date.parse()接受一个因地区而异的表示日期的字符串做参数，返回毫秒数；Date.UTC(year, monthFrom0, day, hourFrom0, minute, sec, millisec),也返回毫秒数。直接用构造函数会默认调用这两函数，只要传的参数对，不过若构造函数默认调用Date.UTC,则创造的时间是UTC时间。
 2. 继承的与自带的日期格式化方法都没什么卵用，valueOf方法返回一个毫秒数；有用的方法有：
 
@@ -133,7 +142,7 @@
   setHour() //依次类推
   ```
 
-####RegExp
+#### RegExp
 1. 正则表达式由pattern与flags部分组成
 
   ```js
@@ -169,7 +178,7 @@
   [^0-9]不是数字的内容
   ```
 
-####Function
+#### Function
 1. 函数实际上是对象，函数名只是指向函数对象的指针
 
   ```js
@@ -203,7 +212,7 @@
   var a = funcb.bind(objc) // objc里是不会多一个funcb方法的
   ```
 
-####基本包装类型
+#### 基本包装类型
 1. 为了便于操作**基本类型值**, ecma提供了三个特殊的**引用类型**, *Boolean, Number, String*, 它们具有与各自基本类型相对应的特殊行为。为了便于操作，每当读取一个基本类型值，后台都会创建一个对应的**基本包装类型**对象，从而能够操作基本类型数据。
 2. 基本包装类型的生存期为一行代码的执行瞬间，生成实例，进行操作，然后立即销毁，所以不能给为*基本类型值*添加属性和方法。
 3. 使用new调用基本包装类型的构造函数，直接调用为调用转型函数。
@@ -226,11 +235,11 @@
   Number.isFinite(5) // true
   ```
 
-#####Number
+##### Number
 1. 基本包装类型与基本类型不同，前者对象，后者基本类型
 2. toFixed(a)按照指定小数位返回数值字符串，toExpotential(a)指数标志法a为小数位数，toPrecision(a)根据a（所有数字位数）自动判断用前两种方法
 
-######es6
+###### es6
 
 ```js
 Number.isFinite(10) //true
@@ -242,7 +251,7 @@ Number.EPSILON // 为浮点数运算设置一个误差范围，误差常量
 Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范围无法精确表示
 ```
 
-#####String
+##### String
 1. charAt()与[]（ie8+）作用一样，charCodeAt()返回字符编码
 2. subString(st, end);subStr(st, len);slice(st, end)不会修改字符串，负数情况下：第一个参数subString()转为0；第二个参数，subString,subStr均转为0;有点乱，建议用slice，subStr
 3. indexOf,lastIndexOf接受第二个参数，从哪开始搜索
@@ -252,7 +261,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 7. localeCompare（b）排在b前，返回负数，0相同
 8. fromCharCode()接受一个或多个字符编码,返回一个字符串
 
-######es6
+###### es6
 1. js内，字符以utf-16格式存储，每个字符固定为两个字节，四个字符es5就不一定能正确处理了，可以借助es6的字符串方法来处理codePointAt()(代替charCodeAt),at()(es7中的代替charAt)String.fromCodePoint(UTF-16字符)
 2. 为了表示语调和重音符号，unicode提供两种方案：直接提供字符以及合成符号，js无法识别，normalize（）方法提供unicode正规化的统一方案
 3.
@@ -272,7 +281,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 5. 模版字符串中可以调用函数
 6. **标签模版部分有待研究**
 
-####单体内置对象
+#### 单体内置对象
 1. **单体内置对象**为ecmascript提供的不依赖于宿主环境的对象
 2. **global**对象，所有全局函数与变量都是global对象的属性和方法
 3. 用utf-8编码替换所有字符
@@ -296,9 +305,9 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   Math.round() // 四舍五入
   ```
 
-##六、面向对象的程序设计
+## 六、面向对象的程序设计
 
-####理解对象
+#### 理解对象
 1. 每个对象都是基于一个引用类型创建的，这个引用类型可以是原生或者自定义的
 2. 对象的属性在创建时都带有一些特征值，js通过这些特征值来定义其行为
 3. js属性分为两种,数据属性与访问器属性
@@ -327,7 +336,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   ```
 8. Object.getOwnPropertyDescriptor(obj, prop),取得给定属性的特性对象，ie9+
 
-####创建对象
+#### 创建对象
 1. 读写操作中写是一个复合操作，首先要读（找到写入的位置）才能写，如a.b = 1，首先是读到a.b后再执行了写入操作
 2. constructor属性定义在prototype上，指向prototype属性所在的构造函数
 
@@ -342,7 +351,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
 5. 构造函数在不返回值的情况下，默认返回新对象实例，如果有返回值，可以重写调用构造函数时返回的值, 返回数组构造数组，返回对象构造对象
 6. 稳妥构造函数，不用this,不用new，用于安全环境，基本上就是不用this的工厂模式
 
-####继承
+#### 继承
 1. 原型链的基本思想，对象a的__proto__指向prototype，如果将prototype指向对象b,原型检索会在这断掉吗？不会，对象b也有自己的__proto__属性，最次也指向指向Object再指向Object的原型null即原型链的终点
 2. ``原型链继承``：通过原型链继承，缺点，继承是将父级的变成自己的，而下面代码则不是，继承过来的对象是所有子级所公用的，改了b1的一个属性（继承而来），b2也变了
 
@@ -413,7 +422,7 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   }
   ```
 
-####es6 Class
+#### es6 Class
 1. class为es5的syntactic sugar,其实是es5的构造函数与原型，但不能当普通函数调用
 
   ```js
@@ -565,9 +574,9 @@ Number.isSafeInteger(2**53) //false **为es7的指数运算符，超过这个范
   }
   ```
 
-##七、函数表达式
+## 七、函数表达式
 
-####闭包
+#### 闭包
 1. 经典问题如下代码，关键点在于：
   - var与let的区别，前者的作用域为所在的函数作用域，后者为所在的块级作用域
   - 变量解析的过程：顺着作用域链向上走
