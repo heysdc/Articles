@@ -10,3 +10,5 @@
 ### [字符编码](./posts/characterEncoding.md)
 ### [浏览器的上传下载相关知识梳理](./posts/downloadAndUpload.md)
 ### [javascript执行环境详解](./posts/executionContext.md)
+### [数据结构算法](./posts/algorithm)
+### [习题](./posts/exercise.md)
